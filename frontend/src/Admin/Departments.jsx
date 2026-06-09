@@ -5,22 +5,13 @@ import {
   Filter,
   ChevronDown,
   MoreHorizontal,
-  Building2,
   Wrench,
   Leaf,
   ShieldCheck,
   HeartPulse,
   HardHat,
   Droplets,
-  Users,
-  Clock,
-  CheckCircle,
   AlertTriangle,
-  Mail,
-  Phone,
-  MapPin,
-  Eye,
-  Edit,
 } from "lucide-react";
 import AdminLayout from "../layouts/AdminLayouts";
 
@@ -141,37 +132,10 @@ const departments = [
   },
 ];
 
-const summary = [
-  {
-    title: "Total Departments",
-    value: "6",
-    icon: Building2,
-    color: "bg-green-100 text-green-700",
-  },
-  {
-    title: "Assigned Reports",
-    value: "196",
-    icon: Users,
-    color: "bg-blue-100 text-blue-700",
-  },
-  {
-    title: "In Progress",
-    value: "119",
-    icon: Clock,
-    color: "bg-yellow-100 text-yellow-700",
-  },
-  {
-    title: "Resolved",
-    value: "554",
-    icon: CheckCircle,
-    color: "bg-green-100 text-green-700",
-  },
-];
-
 export default function Departments() {
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
         <header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -183,28 +147,21 @@ export default function Departments() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <button className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-700 shadow-sm hover:bg-gray-50">
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-700 shadow-sm hover:bg-gray-50 sm:w-auto">
               <Filter size={17} />
               Filter
             </button>
 
-            <button className="flex items-center gap-2 rounded-xl bg-green-700 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-green-800">
+            <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-700 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-green-800 sm:w-auto">
               <Plus size={17} />
               Add Department
             </button>
           </div>
         </header>
 
-        {/* Summary Cards */}
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {summary.map((item) => (
-            <SummaryCard key={item.title} item={item} />
-          ))}
-        </section>
-
         {/* Filters */}
-        <section className="rounded-2xl bg-white p-5 shadow-sm">
+        <section className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
           <div className="grid gap-4 lg:grid-cols-[1fr_auto_auto]">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -220,16 +177,9 @@ export default function Departments() {
           </div>
         </section>
 
-        {/* Department Cards */}
-        <section className="grid gap-6 xl:grid-cols-3">
-          {departments.map((department) => (
-            <DepartmentCard key={department.id} department={department} />
-          ))}
-        </section>
-
         {/* Department Table */}
-        <section className="rounded-2xl bg-white p-5 shadow-sm">
-          <div className="flex items-center justify-between">
+        <section className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-lg font-extrabold text-gray-900">
                 Department Performance Overview
@@ -239,9 +189,6 @@ export default function Departments() {
               </p>
             </div>
 
-            <button className="text-sm font-bold text-green-700">
-              View All
-            </button>
           </div>
 
           <div className="mt-5 overflow-x-auto">
@@ -273,122 +220,12 @@ export default function Departments() {
   );
 }
 
-function SummaryCard({ item }) {
-  const Icon = item.icon;
-
-  return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm">
-      <div className="flex items-center gap-4">
-        <div className={`flex h-14 w-14 items-center justify-center rounded-full ${item.color}`}>
-          <Icon size={24} />
-        </div>
-
-        <div>
-          <p className="text-sm font-bold text-gray-700">{item.title}</p>
-          <h3 className="mt-1 text-3xl font-extrabold text-gray-900">
-            {item.value}
-          </h3>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function SelectButton({ label }) {
   return (
-    <button className="flex h-12 min-w-48 items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold text-gray-700 hover:bg-gray-50">
+    <button className="flex h-12 w-full min-w-0 items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold text-gray-700 hover:bg-gray-50 sm:min-w-48">
       {label}
       <ChevronDown size={16} />
     </button>
-  );
-}
-
-function DepartmentCard({ department }) {
-  const Icon = department.icon;
-
-  return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-      <div className="flex items-start justify-between gap-4">
-        <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${department.color}`}>
-          <Icon size={25} />
-        </div>
-
-        <button className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-700">
-          <MoreHorizontal size={18} />
-        </button>
-      </div>
-
-      <div className="mt-5">
-        <p className="text-xs font-bold uppercase tracking-wide text-gray-400">
-          {department.id}
-        </p>
-        <h2 className="mt-1 text-lg font-extrabold text-gray-900">
-          {department.name}
-        </h2>
-        <p className="mt-2 line-clamp-2 text-sm leading-6 text-gray-500">
-          {department.description}
-        </p>
-      </div>
-
-      <div className="mt-5 space-y-3">
-        <InfoLine icon={<Users size={16} />} label={department.head} />
-        <InfoLine icon={<Mail size={16} />} label={department.email} />
-        <InfoLine icon={<Phone size={16} />} label={department.phone} />
-        <InfoLine icon={<MapPin size={16} />} label={department.location} />
-      </div>
-
-      <div className="mt-5 rounded-2xl bg-gray-50 p-4">
-        <div className="mb-2 flex items-center justify-between">
-          <p className="text-sm font-bold text-gray-700">Workload</p>
-          <p className="text-sm font-extrabold text-gray-900">
-            {department.workload}%
-          </p>
-        </div>
-
-        <div className="h-2 overflow-hidden rounded-full bg-gray-200">
-          <div
-            className={`h-full rounded-full ${department.bar}`}
-            style={{ width: `${department.workload}%` }}
-          />
-        </div>
-
-        <div className="mt-4 grid grid-cols-3 gap-3 text-center">
-          <MiniStat label="Assigned" value={department.assigned} />
-          <MiniStat label="Active" value={department.inProgress} />
-          <MiniStat label="Resolved" value={department.resolved} />
-        </div>
-      </div>
-
-      <div className="mt-5 grid grid-cols-2 gap-3">
-        <button className="flex items-center justify-center gap-2 rounded-xl bg-green-700 px-4 py-3 text-sm font-bold text-white hover:bg-green-800">
-          <Eye size={16} />
-          View
-        </button>
-
-        <button className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50">
-          <Edit size={16} />
-          Edit
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function InfoLine({ icon, label }) {
-  return (
-    <div className="flex min-w-0 items-center gap-2 text-sm text-gray-500">
-      <span className="shrink-0 text-green-700">{icon}</span>
-      <span className="truncate font-semibold">{label}</span>
-    </div>
-  );
-}
-
-function MiniStat({ label, value }) {
-  return (
-    <div>
-      <p className="text-lg font-extrabold text-gray-900">{value}</p>
-      <p className="text-[11px] font-bold text-gray-400">{label}</p>
-    </div>
   );
 }
 

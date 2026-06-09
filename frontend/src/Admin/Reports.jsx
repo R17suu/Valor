@@ -116,7 +116,7 @@ export default function Reports() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
         <header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -128,13 +128,13 @@ export default function Reports() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <button className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-700 shadow-sm hover:bg-gray-50">
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-700 shadow-sm hover:bg-gray-50 sm:w-auto">
               <Download size={17} />
               Export
             </button>
 
-            <button className="flex items-center gap-2 rounded-xl bg-green-700 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-green-800">
+            <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-700 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-green-800 sm:w-auto">
               <Plus size={17} />
               Add Report
             </button>
@@ -142,7 +142,7 @@ export default function Reports() {
         </header>
 
         {/* Stats */}
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {/* <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <ReportStat
             title="Total Reports"
             value="1,245"
@@ -167,10 +167,10 @@ export default function Reports() {
             icon={<CheckCircle size={24} />}
             color="bg-green-100 text-green-700"
           />
-        </section>
+        </section> */}
 
         {/* Filters */}
-        <section className="rounded-2xl bg-white p-5 shadow-sm">
+        <section className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
           <div className="grid gap-4 lg:grid-cols-[1fr_auto_auto_auto]">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -193,8 +193,8 @@ export default function Reports() {
         {/* Main Content */}
         <section className="grid gap-6 xl:grid-cols-12">
           {/* Reports Table */}
-          <div className="rounded-2xl bg-white p-5 shadow-sm xl:col-span-8">
-            <div className="flex items-center justify-between">
+          <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5 xl:col-span-8">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-lg font-extrabold text-gray-900">
                   All Citizen Reports
@@ -204,9 +204,6 @@ export default function Reports() {
                 </p>
               </div>
 
-              <button className="text-sm font-bold text-green-700">
-                View All
-              </button>
             </div>
 
             <div className="mt-5 overflow-x-auto">
@@ -238,7 +235,7 @@ export default function Reports() {
           </div>
 
           {/* Report Details Panel */}
-          <aside className="rounded-2xl bg-white p-5 shadow-sm xl:col-span-4">
+          <aside className="rounded-2xl bg-white p-4 shadow-sm sm:p-5 xl:col-span-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-extrabold text-gray-900">
                 Report Details
@@ -253,7 +250,7 @@ export default function Reports() {
                 <img
                   src={selectedReport.image}
                   alt={selectedReport.title}
-                  className="h-48 w-full rounded-2xl object-cover"
+                  className="h-44 w-full rounded-2xl object-cover sm:h-48"
                 />
 
                 <div className="mt-5 space-y-4">
@@ -290,7 +287,7 @@ export default function Reports() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <InfoBox label="Category">
                       <CategoryBadge category={selectedReport.category} />
                     </InfoBox>
@@ -322,7 +319,7 @@ export default function Reports() {
                     </p>
                   </InfoBox>
 
-                  <div className="grid grid-cols-2 gap-3 pt-2">
+                  <div className="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2">
                     <button className="flex items-center justify-center gap-2 rounded-xl bg-green-700 px-4 py-3 text-sm font-bold text-white hover:bg-green-800">
                       <UserCheck size={17} />
                       Assign
@@ -371,7 +368,7 @@ function ReportStat({ title, value, icon, color }) {
 
 function SelectFilter({ label, options }) {
   return (
-    <button className="flex h-12 min-w-44 items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold text-gray-700">
+    <button className="flex h-12 w-full min-w-0 items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold text-gray-700 sm:min-w-44">
       {label}
       <ChevronDown size={16} />
     </button>

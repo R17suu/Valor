@@ -13,13 +13,13 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import CitizenLayout from "../Layouts/CitizenLayouts";
-import heroImage from "../assets/P1.png";
-import cityLinkLogo from "../assets/logo.png";
-import citySeal from "../assets/seal.png";
+import cityOverview from "../assets/P2.jpg";
+import digitalReport from "../assets/P3.jpg";
+import lguResponse from "../assets/P5.jpg";
 
 const heroSlides = [
   {
-    image: heroImage,
+    image: cityOverview,
     alt: "Aerial view of Valencia City",
     eyebrow: "Live city overview",
     title: "See what is happening across Valencia.",
@@ -27,21 +27,27 @@ const heroSlides = [
       "Monitor reports, barangays, and response activity from a single dashboard.",
   },
   {
-    image: cityLinkLogo,
-    alt: "VALOR smart community reporting logo",
+    image: digitalReport,
+    alt: "Citizen using a mobile phone to report a community issue",
     eyebrow: "Digital reporting",
     title: "One place to submit and track concerns.",
     description:
       "Citizens can send reports with location details and follow progress in real time.",
   },
   {
-    image: citySeal,
-    alt: "Official seal of Valencia City",
+    image: lguResponse,
+    alt: "Local government response team working on a city concern",
     eyebrow: "Built for the LGU",
     title: "Connected to local government response.",
     description:
       "Designed to support faster coordination between residents and the city.",
   },
+];
+
+const loopedHeroSlides = [
+  heroSlides[heroSlides.length - 1],
+  ...heroSlides,
+  heroSlides[0],
 ];
 
 export default function Home() {
@@ -53,43 +59,33 @@ export default function Home() {
           <MobileHeroCarousel />
         </section>
 
-        <section className="grid grid-cols-2 gap-4 px-5 pt-5">
+        {/* <section className="grid grid-cols-3 gap-2.5 px-5 pt-5">
           <MobileFeatureCard
-            title="REPORT AN ISSUE"
-            desc="Submit a concern in your area"
+            title="REPORT ISSUE"
+            // desc="Submit a concern"
             color="bg-green-700 text-white"
-            icon={<Plus size={24} />}
+            icon={<Plus size={20} />}
             iconBox="bg-white text-green-700"
             to="/report-issue"
           />
 
           <MobileFeatureCard
             title="MY REPORTS"
-            desc="Track the status of your reports"
+            // desc="Track your reports"
             color="bg-orange-50 text-orange-700"
-            icon={<FileText size={24} />}
+            icon={<FileText size={20} />}
             iconBox="bg-orange-400 text-white"
             to="/reports"
           />
 
           <MobileFeatureCard
-            title="COMMUNITY REPORTS"
-            desc="View public reports near you"
-            color="bg-blue-50 text-blue-700"
-            icon={<UsersRound size={24} />}
-            iconBox="bg-blue-500 text-white"
-            to="/community-reports"
-          />
-
-          <MobileFeatureCard
             title="ABOUT VALOR"
-            desc="Learn more about the platform"
+            // desc="Learn about the app"
             color="bg-purple-50 text-purple-700"
-            icon={<Info size={24} />}
+            icon={<Info size={20} />}
             iconBox="bg-purple-500 text-white"
           />
-        </section>
-
+        </section> */}
         <section className="px-5 pt-6">
           <NearbyIncidentsCard />
         </section>
@@ -183,8 +179,16 @@ export default function Home() {
         </section>
 
         <section className="mt-6 grid grid-cols-4 gap-6">
-          <StatCard title="Total Reports" value="1,248" color="text-green-700" />
-          <StatCard title="Active Incidents" value="86" color="text-yellow-600" />
+          <StatCard
+            title="Total Reports"
+            value="1,248"
+            color="text-green-700"
+          />
+          <StatCard
+            title="Active Incidents"
+            value="86"
+            color="text-yellow-600"
+          />
           <StatCard title="Resolved" value="972" color="text-green-700" />
           <StatCard title="Critical" value="12" color="text-red-600" />
         </section>
@@ -272,26 +276,96 @@ export default function Home() {
   );
 }
 
-function HeroCarousel() {
-  const [activeSlide, setActiveSlide] = useState(0);
+function useLoopingHeroCarousel() {
+  const [activeSlide, setActiveSlide] = useState(1);
+  const [isTransitionEnabled, setIsTransitionEnabled] = useState(true);
 
   useEffect(() => {
     const slideInterval = window.setInterval(() => {
-      setActiveSlide((currentSlide) => (currentSlide + 1) % heroSlides.length);
+      setIsTransitionEnabled(true);
+      setActiveSlide((currentSlide) => currentSlide + 1);
     }, 4500);
 
     return () => window.clearInterval(slideInterval);
   }, []);
 
+  useEffect(() => {
+    if (isTransitionEnabled) {
+      return undefined;
+    }
+
+    let firstFrame = 0;
+    let secondFrame = 0;
+
+    firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => {
+        setIsTransitionEnabled(true);
+      });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
+    };
+  }, [isTransitionEnabled]);
+
+  const handleTransitionEnd = () => {
+    if (activeSlide === loopedHeroSlides.length - 1) {
+      setIsTransitionEnabled(false);
+      setActiveSlide(1);
+      return;
+    }
+
+    if (activeSlide === 0) {
+      setIsTransitionEnabled(false);
+      setActiveSlide(loopedHeroSlides.length - 2);
+    }
+  };
+
+  const currentSlide =
+    activeSlide === loopedHeroSlides.length - 1
+      ? 0
+      : activeSlide === 0
+        ? heroSlides.length - 1
+        : activeSlide - 1;
+
+  const goToSlide = (index) => {
+    setIsTransitionEnabled(true);
+    setActiveSlide(index + 1);
+  };
+
+  return {
+    activeSlide,
+    currentSlide,
+    goToSlide,
+    handleTransitionEnd,
+    isTransitionEnabled,
+  };
+}
+
+function HeroCarousel() {
+  const {
+    activeSlide,
+    currentSlide,
+    goToSlide,
+    handleTransitionEnd,
+    isTransitionEnabled,
+  } = useLoopingHeroCarousel();
+
   return (
     <div className="relative min-h-[360px] overflow-hidden rounded-[2rem] shadow-[0_24px_60px_rgba(22,101,52,0.18)]">
       <div
-        className="flex h-full min-h-[360px] transition-transform duration-700 ease-out"
+        className={`flex h-full min-h-[360px] ${
+          isTransitionEnabled
+            ? "transition-transform duration-700 ease-out"
+            : "transition-none"
+        }`}
         style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+        onTransitionEnd={handleTransitionEnd}
       >
-        {heroSlides.map((slide) => (
+        {loopedHeroSlides.map((slide, index) => (
           <article
-            key={slide.title}
+            key={`${slide.title}-${index}`}
             className="relative min-w-full overflow-hidden bg-cover bg-center"
             style={{ backgroundImage: `url(${slide.image})` }}
           >
@@ -325,8 +399,8 @@ function HeroCarousel() {
       </div>
 
       <CarouselDots
-        activeSlide={activeSlide}
-        setActiveSlide={setActiveSlide}
+        activeSlide={currentSlide}
+        setActiveSlide={goToSlide}
         desktop
       />
     </div>
@@ -334,25 +408,28 @@ function HeroCarousel() {
 }
 
 function MobileHeroCarousel() {
-  const [activeSlide, setActiveSlide] = useState(0);
-
-  useEffect(() => {
-    const slideInterval = window.setInterval(() => {
-      setActiveSlide((currentSlide) => (currentSlide + 1) % heroSlides.length);
-    }, 4500);
-
-    return () => window.clearInterval(slideInterval);
-  }, []);
+  const {
+    activeSlide,
+    currentSlide,
+    goToSlide,
+    handleTransitionEnd,
+    isTransitionEnabled,
+  } = useLoopingHeroCarousel();
 
   return (
     <div className="relative min-h-[230px] overflow-hidden rounded-3xl shadow-[0_18px_45px_rgba(22,101,52,0.18)]">
       <div
-        className="flex h-full min-h-[230px] transition-transform duration-700 ease-out"
+        className={`flex h-full min-h-[230px] ${
+          isTransitionEnabled
+            ? "transition-transform duration-700 ease-out"
+            : "transition-none"
+        }`}
         style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+        onTransitionEnd={handleTransitionEnd}
       >
-        {heroSlides.map((slide) => (
+        {loopedHeroSlides.map((slide, index) => (
           <article
-            key={slide.title}
+            key={`${slide.title}-${index}`}
             className="relative min-w-full overflow-hidden bg-cover bg-center"
             style={{ backgroundImage: `url(${slide.image})` }}
           >
@@ -383,10 +460,7 @@ function MobileHeroCarousel() {
         ))}
       </div>
 
-      <CarouselDots
-        activeSlide={activeSlide}
-        setActiveSlide={setActiveSlide}
-      />
+      <CarouselDots activeSlide={currentSlide} setActiveSlide={goToSlide} />
     </div>
   );
 }
@@ -404,16 +478,14 @@ function CarouselDots({ activeSlide, setActiveSlide, desktop = false }) {
           type="button"
           aria-label={`Show slide ${index + 1}`}
           onClick={() => setActiveSlide(index)}
-          className={`rounded-full transition ${
-            desktop ? "h-2.5" : "h-2"
-          } ${
+          className={`rounded-full transition ${desktop ? "h-2.5" : "h-2"} ${
             index === activeSlide
               ? desktop
                 ? "w-8 bg-white"
                 : "w-6 bg-white"
               : desktop
-              ? "w-2.5 bg-white/50 hover:bg-white/80"
-              : "w-2 bg-white/50 hover:bg-white/80"
+                ? "w-2.5 bg-white/50 hover:bg-white/80"
+                : "w-2 bg-white/50 hover:bg-white/80"
           }`}
         />
       ))}
@@ -515,18 +587,23 @@ function CommunityReportCard({
 }
 
 function MobileFeatureCard({ title, desc, color, icon, iconBox, to }) {
-  const wrapperClasses = `min-h-[135px] rounded-2xl p-4 text-left shadow-sm transition hover:scale-[1.02] ${color}`;
+  const wrapperClasses = `aspect-[0.9] min-h-[110px] w-full rounded-2xl p-3 text-left shadow-sm transition hover:scale-[1.02] ${color}`;
 
   const content = (
     <div className="flex h-full flex-col justify-between">
       <div>
-        <h3 className="text-sm font-extrabold leading-tight">{title}</h3>
-        <p className="mt-2 text-xs font-medium opacity-80">{desc}</p>
+        <h3 className="text-[13px] font-extrabold leading-[1.15]">
+          {title}
+        </h3>
+
+        {/* <p className="mt-2 text-[11px] font-medium leading-snug opacity-80">
+          {desc}
+        </p> */}
       </div>
 
       <div className="flex justify-end">
         <div
-          className={`flex h-10 w-10 items-center justify-center rounded-full ${iconBox}`}
+          className={`flex h-9 w-9 items-center justify-center rounded-full ${iconBox}`}
         >
           {icon}
         </div>
