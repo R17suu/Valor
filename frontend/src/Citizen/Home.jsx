@@ -230,7 +230,7 @@ export default function Home() {
           <div className="col-span-7 rounded-3xl bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-xl font-bold">Community Updates</h3>
+                <h3 className="text-xl font-bold">Community Reports</h3>
                 <p className="text-sm text-gray-500">
                   Anonymous public reports submitted by citizens.
                 </p>
