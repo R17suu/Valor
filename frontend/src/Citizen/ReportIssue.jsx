@@ -160,7 +160,7 @@ function UploadPhotoStep({ hasPhoto, setHasPhoto, onNext, onBack, desktop = fals
             </div>
           )}
 
-          <div className="mt-5 grid grid-cols-2 gap-3">
+          <div className="mt-5 grid grid-cols-1 gap-3">
             <button
               type="button"
               onClick={() => setHasPhoto(true)}
@@ -168,15 +168,6 @@ function UploadPhotoStep({ hasPhoto, setHasPhoto, onNext, onBack, desktop = fals
             >
               <Camera size={18} />
               Take Photo
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setHasPhoto(true)}
-              className="flex items-center justify-center gap-2 rounded-2xl bg-white py-4 text-sm font-extrabold text-green-700 shadow-sm hover:bg-green-50"
-            >
-              <Upload size={18} />
-              Upload
             </button>
           </div>
         </div>

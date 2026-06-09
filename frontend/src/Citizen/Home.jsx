@@ -1,4 +1,5 @@
 // src/pages/Home.jsx
+import { useEffect, useState } from "react";
 import {
   Plus,
   FileText,
@@ -11,38 +12,46 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import CitizenLayout from "../Layouts/CitizenLayouts";
-import ApplicationLogo from "../Components/ApplicationLogo";
+import heroImage from "../assets/P1.png";
+import cityLinkLogo from "../assets/logo.png";
+import citySeal from "../assets/seal.png";
+
+const heroSlides = [
+  {
+    image: heroImage,
+    alt: "Aerial view of Valencia City",
+    eyebrow: "Live city overview",
+    title: "See what is happening across Valencia.",
+    description:
+      "Monitor reports, barangays, and response activity from a single dashboard.",
+  },
+  {
+    image: cityLinkLogo,
+    alt: "CityLink smart community reporting logo",
+    eyebrow: "Digital reporting",
+    title: "One place to submit and track concerns.",
+    description:
+      "Citizens can send reports with location details and follow progress in real time.",
+  },
+  {
+    image: citySeal,
+    alt: "Official seal of Valencia City",
+    eyebrow: "Built for the LGU",
+    title: "Connected to local government response.",
+    description:
+      "Designed to support faster coordination between residents and the city.",
+  },
+];
 
 export default function Home() {
   return (
     <CitizenLayout>
       {/* Mobile Home Page */}
       <div className="lg:hidden">
-        {/* Greeting Card */}
         <section className="px-5 pt-6">
-          <div className="relative overflow-hidden rounded-2xl bg-green-100 p-5">
-            <div className="relative z-10 max-w-[60%]">
-              <h2 className="text-lg font-bold text-green-900">
-                Good morning, Valenciano! 👋
-              </h2>
-              <p className="mt-2 text-xs font-medium text-green-800">
-                Together, let’s build a better Valencia City.
-              </p>
-            </div>
-
-            {/* Simple City Illustration */}
-            <div className="absolute bottom-0 right-0 h-28 w-40">
-              <div className="absolute bottom-0 right-0 h-16 w-36 rounded-t-full bg-green-300" />
-              <div className="absolute bottom-0 right-6 h-20 w-28 rounded-t-full bg-green-400" />
-              <div className="absolute bottom-0 right-12 h-12 w-8 rounded-t-md bg-yellow-400" />
-              <div className="absolute bottom-0 right-4 h-16 w-8 rounded-t-md bg-green-700" />
-              <div className="absolute right-16 top-4 h-4 w-8 rounded-full bg-white" />
-              <div className="absolute right-5 top-9 h-3 w-3 rounded-full bg-yellow-400" />
-            </div>
-          </div>
+          <MobileHeroCarousel />
         </section>
 
-        {/* Feature Cards */}
         <section className="grid grid-cols-2 gap-4 px-5 pt-5">
           <MobileFeatureCard
             title="REPORT AN ISSUE"
@@ -63,7 +72,7 @@ export default function Home() {
 
           <MobileFeatureCard
             title="CITY DASHBOARD"
-            desc="See what’s happening in Valencia City"
+            desc="See what's happening in Valencia City"
             color="bg-blue-50 text-blue-700"
             icon={<BarChart3 size={24} />}
             iconBox="bg-blue-500 text-white"
@@ -81,14 +90,13 @@ export default function Home() {
 
       {/* Desktop Home Page */}
       <div className="hidden lg:block">
-        {/* Desktop Header */}
         <header className="flex items-center justify-between">
           <div>
             <h2 className="text-3xl font-extrabold text-gray-900">
               Home Dashboard
             </h2>
             <p className="mt-1 text-gray-500">
-              Welcome back, Valenciano. Here’s your quick overview.
+              Welcome back, Valenciano. Here's your quick overview.
             </p>
           </div>
 
@@ -111,34 +119,13 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Hero Section */}
         <section className="mt-8 grid grid-cols-3 gap-6">
-          <div className="col-span-2 overflow-hidden rounded-3xl bg-green-100 p-8">
-            <div className="max-w-xl">
-              <h3 className="text-3xl font-extrabold text-green-950">
-                Good morning, Valenciano! 👋
-              </h3>
-              <p className="mt-3 text-green-800">
-                Report community issues, track LGU response, and help build a
-                smarter Valencia City.
-              </p>
-
-              <div className="mt-6 flex gap-3">
-                <Link
-                  to="/report-issue"
-                  className="rounded-xl bg-green-700 px-5 py-3 text-sm font-semibold text-white hover:bg-green-800"
-                >
-                  Report an Issue
-                </Link>
-                <button className="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-green-700 hover:bg-green-50">
-                  View Public Dashboard
-                </button>
-              </div>
-            </div>
+          <div className="col-span-2">
+            <HeroCarousel />
           </div>
 
           <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <h4 className="font-bold text-gray-900">Today’s Priority</h4>
+            <h4 className="font-bold text-gray-900">Today's Priority</h4>
             <p className="mt-2 text-sm text-gray-500">
               Critical reports that need quick LGU attention.
             </p>
@@ -151,7 +138,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Stats */}
         <section className="mt-6 grid grid-cols-4 gap-6">
           <StatCard title="Total Reports" value="1,248" color="text-green-700" />
           <StatCard title="Active Incidents" value="86" color="text-yellow-600" />
@@ -159,7 +145,6 @@ export default function Home() {
           <StatCard title="Critical" value="12" color="text-red-600" />
         </section>
 
-        {/* Quick Actions */}
         <section className="mt-6 grid grid-cols-4 gap-6">
           <DesktopFeatureCard
             title="Report an Issue"
@@ -191,7 +176,6 @@ export default function Home() {
           />
         </section>
 
-        {/* Recent Reports */}
         <section className="mt-6 rounded-3xl bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
@@ -246,6 +230,159 @@ export default function Home() {
         </section>
       </div>
     </CitizenLayout>
+  );
+}
+
+function HeroCarousel() {
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  useEffect(() => {
+    const slideInterval = window.setInterval(() => {
+      setActiveSlide((currentSlide) => (currentSlide + 1) % heroSlides.length);
+    }, 4500);
+
+    return () => window.clearInterval(slideInterval);
+  }, []);
+
+  return (
+    <div className="relative min-h-[360px] overflow-hidden rounded-[2rem] shadow-[0_24px_60px_rgba(22,101,52,0.18)]">
+      <div
+        className="flex h-full min-h-[360px] transition-transform duration-700 ease-out"
+        style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+      >
+        {heroSlides.map((slide) => (
+          <article
+            key={slide.title}
+            className="relative min-w-full overflow-hidden bg-cover bg-center"
+            style={{ backgroundImage: `url(${slide.image})` }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-green-950/90 via-green-900/55 to-green-900/20" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.28),transparent_35%)]" />
+
+            <div className="relative z-10 flex h-full min-h-[360px] flex-col justify-end p-8 text-white">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-green-100">
+                {slide.eyebrow}
+              </p>
+
+              <h4 className="mt-3 max-w-md text-3xl font-extrabold leading-tight">
+                {slide.title}
+              </h4>
+
+              <p className="mt-3 max-w-md text-sm leading-6 text-green-50/90">
+                {slide.description}
+              </p>
+
+              <div className="mt-6 flex gap-3">
+                <Link
+                  to="/report-issue"
+                  className="rounded-xl bg-white px-5 py-3 text-sm font-bold text-green-700 hover:bg-green-50"
+                >
+                  Report an Issue
+                </Link>
+
+                {/* <button className="rounded-xl bg-green-700/80 px-5 py-3 text-sm font-bold text-white backdrop-blur hover:bg-green-700">
+                  View Dashboard
+                </button> */}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <CarouselDots
+        activeSlide={activeSlide}
+        setActiveSlide={setActiveSlide}
+        desktop
+      />
+    </div>
+  );
+}
+
+function MobileHeroCarousel() {
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  useEffect(() => {
+    const slideInterval = window.setInterval(() => {
+      setActiveSlide((currentSlide) => (currentSlide + 1) % heroSlides.length);
+    }, 4500);
+
+    return () => window.clearInterval(slideInterval);
+  }, []);
+
+  return (
+    <div className="relative min-h-[230px] overflow-hidden rounded-3xl shadow-[0_18px_45px_rgba(22,101,52,0.18)]">
+      <div
+        className="flex h-full min-h-[230px] transition-transform duration-700 ease-out"
+        style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+      >
+        {heroSlides.map((slide) => (
+          <article
+            key={slide.title}
+            className="relative min-w-full overflow-hidden bg-cover bg-center"
+            style={{ backgroundImage: `url(${slide.image})` }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-green-950/90 via-green-900/60 to-green-900/20" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.25),transparent_35%)]" />
+
+            <div className="relative z-10 flex min-h-[230px] flex-col justify-end p-5 text-white">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-green-100">
+                {slide.eyebrow}
+              </p>
+
+              <h2 className="mt-2 text-xl font-extrabold leading-tight">
+                {slide.title}
+              </h2>
+
+              <p className="mt-2 line-clamp-2 text-xs font-medium leading-5 text-green-50/90">
+                {slide.description}
+              </p>
+
+              <Link
+                to="/report-issue"
+                className="mt-4 w-fit rounded-xl bg-white px-4 py-2.5 text-xs font-extrabold text-green-700"
+              >
+                Report Issue
+              </Link>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <CarouselDots
+        activeSlide={activeSlide}
+        setActiveSlide={setActiveSlide}
+      />
+    </div>
+  );
+}
+
+function CarouselDots({ activeSlide, setActiveSlide, desktop = false }) {
+  return (
+    <div
+      className={`absolute z-20 flex gap-2 ${
+        desktop ? "bottom-6 right-6" : "bottom-4 right-4"
+      }`}
+    >
+      {heroSlides.map((slide, index) => (
+        <button
+          key={slide.title}
+          type="button"
+          aria-label={`Show slide ${index + 1}`}
+          onClick={() => setActiveSlide(index)}
+          className={`rounded-full transition ${
+            desktop ? "h-2.5" : "h-2"
+          } ${
+            index === activeSlide
+              ? desktop
+                ? "w-8 bg-white"
+                : "w-6 bg-white"
+              : desktop
+              ? "w-2.5 bg-white/50 hover:bg-white/80"
+              : "w-2 bg-white/50 hover:bg-white/80"
+          }`}
+        />
+      ))}
+    </div>
   );
 }
 
