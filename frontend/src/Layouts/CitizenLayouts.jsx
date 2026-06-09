@@ -11,9 +11,9 @@ export default function CitizenLayout({ children }) {
       <div className="mx-auto min-h-screen max-w-md bg-white shadow-xl lg:hidden">
         {/* Mobile Header */}
         <header className="flex items-center justify-between px-5 pt-5">
-          <button className="rounded-lg p-2 hover:bg-gray-100">
+          {/* <button className="rounded-lg p-2 hover:bg-gray-100">
             <Menu size={22} />
-          </button>
+          </button> */}
 
           <div className="flex items-center gap-1">
             <div>
@@ -86,7 +86,7 @@ export default function CitizenLayout({ children }) {
                 VAL<span className="text-red-600">O</span>R
               </h1> */}
                <img src={ValorLogo} alt="Valor Logo" className="h-6 w-auto" />
-              <p className="text-xs text-gray-500 mt-1">Smart Community Reporting</p>
+              <p className="text-10px text-gray-500 mt-1"> Valencia Automated <br /> Local Operations & Response</p>
             </div>
           </div>
 
