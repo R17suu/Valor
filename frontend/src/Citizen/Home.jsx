@@ -1,48 +1,58 @@
 // src/pages/Home.jsx
+import { useEffect, useState } from "react";
 import {
   Plus,
   FileText,
-  BarChart3,
   Info,
   Search,
   Bell,
   MapPin,
   CheckCircle,
+  UsersRound,
+  Map,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import CitizenLayout from "../Layouts/CitizenLayouts";
-import ApplicationLogo from "../Components/ApplicationLogo";
+import heroImage from "../assets/P1.png";
+import cityLinkLogo from "../assets/logo.png";
+import citySeal from "../assets/seal.png";
+
+const heroSlides = [
+  {
+    image: heroImage,
+    alt: "Aerial view of Valencia City",
+    eyebrow: "Live city overview",
+    title: "See what is happening across Valencia.",
+    description:
+      "Monitor reports, barangays, and response activity from a single dashboard.",
+  },
+  {
+    image: cityLinkLogo,
+    alt: "VALOR smart community reporting logo",
+    eyebrow: "Digital reporting",
+    title: "One place to submit and track concerns.",
+    description:
+      "Citizens can send reports with location details and follow progress in real time.",
+  },
+  {
+    image: citySeal,
+    alt: "Official seal of Valencia City",
+    eyebrow: "Built for the LGU",
+    title: "Connected to local government response.",
+    description:
+      "Designed to support faster coordination between residents and the city.",
+  },
+];
 
 export default function Home() {
   return (
     <CitizenLayout>
       {/* Mobile Home Page */}
       <div className="lg:hidden">
-        {/* Greeting Card */}
         <section className="px-5 pt-6">
-          <div className="relative overflow-hidden rounded-2xl bg-green-100 p-5">
-            <div className="relative z-10 max-w-[60%]">
-              <h2 className="text-lg font-bold text-green-900">
-                Good morning, Valenciano! 👋
-              </h2>
-              <p className="mt-2 text-xs font-medium text-green-800">
-                Together, let’s build a better Valencia City.
-              </p>
-            </div>
-
-            {/* Simple City Illustration */}
-            <div className="absolute bottom-0 right-0 h-28 w-40">
-              <div className="absolute bottom-0 right-0 h-16 w-36 rounded-t-full bg-green-300" />
-              <div className="absolute bottom-0 right-6 h-20 w-28 rounded-t-full bg-green-400" />
-              <div className="absolute bottom-0 right-12 h-12 w-8 rounded-t-md bg-yellow-400" />
-              <div className="absolute bottom-0 right-4 h-16 w-8 rounded-t-md bg-green-700" />
-              <div className="absolute right-16 top-4 h-4 w-8 rounded-full bg-white" />
-              <div className="absolute right-5 top-9 h-3 w-3 rounded-full bg-yellow-400" />
-            </div>
-          </div>
+          <MobileHeroCarousel />
         </section>
 
-        {/* Feature Cards */}
         <section className="grid grid-cols-2 gap-4 px-5 pt-5">
           <MobileFeatureCard
             title="REPORT AN ISSUE"
@@ -59,14 +69,16 @@ export default function Home() {
             color="bg-orange-50 text-orange-700"
             icon={<FileText size={24} />}
             iconBox="bg-orange-400 text-white"
+            to="/reports"
           />
 
           <MobileFeatureCard
-            title="CITY DASHBOARD"
-            desc="See what’s happening in Valencia City"
+            title="COMMUNITY REPORTS"
+            desc="View public reports near you"
             color="bg-blue-50 text-blue-700"
-            icon={<BarChart3 size={24} />}
+            icon={<UsersRound size={24} />}
             iconBox="bg-blue-500 text-white"
+            to="/community-reports"
           />
 
           <MobileFeatureCard
@@ -77,18 +89,58 @@ export default function Home() {
             iconBox="bg-purple-500 text-white"
           />
         </section>
+
+        <section className="px-5 pt-6">
+          <NearbyIncidentsCard />
+        </section>
+
+        <section className="px-5 pt-6 pb-24">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-extrabold text-gray-900">
+              Community Updates
+            </h3>
+
+            <Link
+              to="/community-reports"
+              className="text-sm font-bold text-green-700"
+            >
+              View all
+            </Link>
+          </div>
+
+          <div className="mt-4 space-y-4">
+            <CommunityReportCard
+              image="https://images.unsplash.com/photo-1594230614807-2f2791c1bb7b?q=80&w=300&auto=format&fit=crop"
+              title="Pothole reported"
+              location="Barangay 5, near the main road"
+              status="Pending Review"
+              badge="New"
+              badgeColor="bg-green-100 text-green-700"
+              dotColor="bg-orange-500"
+            />
+
+            <CommunityReportCard
+              image="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=300&auto=format&fit=crop"
+              title="Streetlight Outage"
+              location="Magsaysay Ave, Zone 3"
+              status="Technician Dispatched"
+              badge="2h ago"
+              badgeColor="bg-gray-100 text-gray-600"
+              dotColor="bg-green-600"
+            />
+          </div>
+        </section>
       </div>
 
       {/* Desktop Home Page */}
       <div className="hidden lg:block">
-        {/* Desktop Header */}
         <header className="flex items-center justify-between">
           <div>
             <h2 className="text-3xl font-extrabold text-gray-900">
               Home Dashboard
             </h2>
             <p className="mt-1 text-gray-500">
-              Welcome back, Valenciano. Here’s your quick overview.
+              Welcome back, Valenciano. Here's your quick overview.
             </p>
           </div>
 
@@ -111,34 +163,13 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Hero Section */}
         <section className="mt-8 grid grid-cols-3 gap-6">
-          <div className="col-span-2 overflow-hidden rounded-3xl bg-green-100 p-8">
-            <div className="max-w-xl">
-              <h3 className="text-3xl font-extrabold text-green-950">
-                Good morning, Valenciano! 👋
-              </h3>
-              <p className="mt-3 text-green-800">
-                Report community issues, track LGU response, and help build a
-                smarter Valencia City.
-              </p>
-
-              <div className="mt-6 flex gap-3">
-                <Link
-                  to="/report-issue"
-                  className="rounded-xl bg-green-700 px-5 py-3 text-sm font-semibold text-white hover:bg-green-800"
-                >
-                  Report an Issue
-                </Link>
-                <button className="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-green-700 hover:bg-green-50">
-                  View Public Dashboard
-                </button>
-              </div>
-            </div>
+          <div className="col-span-2">
+            <HeroCarousel />
           </div>
 
           <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <h4 className="font-bold text-gray-900">Today’s Priority</h4>
+            <h4 className="font-bold text-gray-900">Today's Priority</h4>
             <p className="mt-2 text-sm text-gray-500">
               Critical reports that need quick LGU attention.
             </p>
@@ -151,7 +182,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Stats */}
         <section className="mt-6 grid grid-cols-4 gap-6">
           <StatCard title="Total Reports" value="1,248" color="text-green-700" />
           <StatCard title="Active Incidents" value="86" color="text-yellow-600" />
@@ -159,7 +189,6 @@ export default function Home() {
           <StatCard title="Critical" value="12" color="text-red-600" />
         </section>
 
-        {/* Quick Actions */}
         <section className="mt-6 grid grid-cols-4 gap-6">
           <DesktopFeatureCard
             title="Report an Issue"
@@ -174,13 +203,15 @@ export default function Home() {
             desc="Track your submitted community reports."
             icon={<FileText size={26} />}
             color="bg-orange-50 text-orange-700"
+            to="/reports"
           />
 
           <DesktopFeatureCard
-            title="Incident Map"
-            desc="View active reports across Valencia."
-            icon={<MapPin size={26} />}
+            title="Community Reports"
+            desc="See anonymous public reports from other citizens."
+            icon={<UsersRound size={26} />}
             color="bg-blue-50 text-blue-700"
+            to="/community-reports"
           />
 
           <DesktopFeatureCard
@@ -191,61 +222,295 @@ export default function Home() {
           />
         </section>
 
-        {/* Recent Reports */}
-        <section className="mt-6 rounded-3xl bg-white p-6 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-xl font-bold">Recent Community Reports</h3>
-              <p className="text-sm text-gray-500">
-                Latest issues submitted by citizens.
-              </p>
-            </div>
-
-            <button className="text-sm font-semibold text-green-700">
-              View all
-            </button>
+        <section className="mt-6 grid grid-cols-12 gap-6">
+          <div className="col-span-5">
+            <NearbyIncidentsCard desktop />
           </div>
 
-          <div className="mt-5 overflow-hidden rounded-2xl border border-gray-100">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 text-gray-500">
-                <tr>
-                  <th className="px-5 py-4">Issue</th>
-                  <th className="px-5 py-4">Barangay</th>
-                  <th className="px-5 py-4">Priority</th>
-                  <th className="px-5 py-4">Status</th>
-                  <th className="px-5 py-4">Date</th>
-                </tr>
-              </thead>
+          <div className="col-span-7 rounded-3xl bg-white p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold">Community Reports</h3>
+                <p className="text-sm text-gray-500">
+                  Anonymous public reports submitted by citizens.
+                </p>
+              </div>
 
-              <tbody>
-                <ReportRow
-                  issue="Road damage near public market"
-                  barangay="Poblacion"
-                  priority="High"
-                  status="In Progress"
-                  date="Today"
-                />
-                <ReportRow
-                  issue="Garbage accumulation"
-                  barangay="Bagontaas"
-                  priority="Medium"
-                  status="Under Review"
-                  date="Today"
-                />
-                <ReportRow
-                  issue="Broken streetlight"
-                  barangay="Batangan"
-                  priority="Low"
-                  status="Assigned"
-                  date="Yesterday"
-                />
-              </tbody>
-            </table>
+              <Link
+                to="/community-reports"
+                className="text-sm font-semibold text-green-700"
+              >
+                View all
+              </Link>
+            </div>
+
+            <div className="mt-5 grid gap-4">
+              <CommunityReportCard
+                image="https://images.unsplash.com/photo-1594230614807-2f2791c1bb7b?q=80&w=300&auto=format&fit=crop"
+                title="Pothole reported"
+                location="Barangay 5, near the main road"
+                status="Pending Review"
+                badge="New"
+                badgeColor="bg-green-100 text-green-700"
+                dotColor="bg-orange-500"
+              />
+
+              <CommunityReportCard
+                image="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=300&auto=format&fit=crop"
+                title="Streetlight Outage"
+                location="Magsaysay Ave, Zone 3"
+                status="Technician Dispatched"
+                badge="2h ago"
+                badgeColor="bg-gray-100 text-gray-600"
+                dotColor="bg-green-600"
+              />
+            </div>
           </div>
         </section>
       </div>
     </CitizenLayout>
+  );
+}
+
+function HeroCarousel() {
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  useEffect(() => {
+    const slideInterval = window.setInterval(() => {
+      setActiveSlide((currentSlide) => (currentSlide + 1) % heroSlides.length);
+    }, 4500);
+
+    return () => window.clearInterval(slideInterval);
+  }, []);
+
+  return (
+    <div className="relative min-h-[360px] overflow-hidden rounded-[2rem] shadow-[0_24px_60px_rgba(22,101,52,0.18)]">
+      <div
+        className="flex h-full min-h-[360px] transition-transform duration-700 ease-out"
+        style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+      >
+        {heroSlides.map((slide) => (
+          <article
+            key={slide.title}
+            className="relative min-w-full overflow-hidden bg-cover bg-center"
+            style={{ backgroundImage: `url(${slide.image})` }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-green-950/90 via-green-900/55 to-green-900/20" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.28),transparent_35%)]" />
+
+            <div className="relative z-10 flex h-full min-h-[360px] flex-col justify-end p-8 text-white">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-green-100">
+                {slide.eyebrow}
+              </p>
+
+              <h4 className="mt-3 max-w-md text-3xl font-extrabold leading-tight">
+                {slide.title}
+              </h4>
+
+              <p className="mt-3 max-w-md text-sm leading-6 text-green-50/90">
+                {slide.description}
+              </p>
+
+              <div className="mt-6 flex gap-3">
+                <Link
+                  to="/report-issue"
+                  className="rounded-xl bg-white px-5 py-3 text-sm font-bold text-green-700 hover:bg-green-50"
+                >
+                  Report an Issue
+                </Link>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <CarouselDots
+        activeSlide={activeSlide}
+        setActiveSlide={setActiveSlide}
+        desktop
+      />
+    </div>
+  );
+}
+
+function MobileHeroCarousel() {
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  useEffect(() => {
+    const slideInterval = window.setInterval(() => {
+      setActiveSlide((currentSlide) => (currentSlide + 1) % heroSlides.length);
+    }, 4500);
+
+    return () => window.clearInterval(slideInterval);
+  }, []);
+
+  return (
+    <div className="relative min-h-[230px] overflow-hidden rounded-3xl shadow-[0_18px_45px_rgba(22,101,52,0.18)]">
+      <div
+        className="flex h-full min-h-[230px] transition-transform duration-700 ease-out"
+        style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+      >
+        {heroSlides.map((slide) => (
+          <article
+            key={slide.title}
+            className="relative min-w-full overflow-hidden bg-cover bg-center"
+            style={{ backgroundImage: `url(${slide.image})` }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-green-950/90 via-green-900/60 to-green-900/20" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.25),transparent_35%)]" />
+
+            <div className="relative z-10 flex min-h-[230px] flex-col justify-end p-5 text-white">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-green-100">
+                {slide.eyebrow}
+              </p>
+
+              <h2 className="mt-2 text-xl font-extrabold leading-tight">
+                {slide.title}
+              </h2>
+
+              <p className="mt-2 line-clamp-2 text-xs font-medium leading-5 text-green-50/90">
+                {slide.description}
+              </p>
+
+              <Link
+                to="/report-issue"
+                className="mt-4 w-fit rounded-xl bg-white px-4 py-2.5 text-xs font-extrabold text-green-700"
+              >
+                Report Issue
+              </Link>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <CarouselDots
+        activeSlide={activeSlide}
+        setActiveSlide={setActiveSlide}
+      />
+    </div>
+  );
+}
+
+function CarouselDots({ activeSlide, setActiveSlide, desktop = false }) {
+  return (
+    <div
+      className={`absolute z-20 flex gap-2 ${
+        desktop ? "bottom-6 right-6" : "bottom-4 right-4"
+      }`}
+    >
+      {heroSlides.map((slide, index) => (
+        <button
+          key={slide.title}
+          type="button"
+          aria-label={`Show slide ${index + 1}`}
+          onClick={() => setActiveSlide(index)}
+          className={`rounded-full transition ${
+            desktop ? "h-2.5" : "h-2"
+          } ${
+            index === activeSlide
+              ? desktop
+                ? "w-8 bg-white"
+                : "w-6 bg-white"
+              : desktop
+              ? "w-2.5 bg-white/50 hover:bg-white/80"
+              : "w-2 bg-white/50 hover:bg-white/80"
+          }`}
+        />
+      ))}
+    </div>
+  );
+}
+
+function NearbyIncidentsCard({ desktop = false }) {
+  return (
+    <div>
+      <h3
+        className={`font-extrabold text-gray-900 ${
+          desktop ? "text-xl" : "text-lg"
+        }`}
+      >
+        Nearby Incidents
+      </h3>
+
+      <div
+        className={`relative mt-4 overflow-hidden rounded-2xl bg-[#DDE7E3] shadow-sm ${
+          desktop ? "h-[248px]" : "h-36"
+        }`}
+      >
+        <div className="absolute inset-0 opacity-60">
+          <div className="absolute left-[-10%] top-[45%] h-16 w-[120%] rounded-full border-t border-gray-400/30" />
+          <div className="absolute left-[20%] top-[-20%] h-[160%] w-px bg-gray-400/20" />
+          <div className="absolute left-[73%] top-[-20%] h-[160%] w-px bg-gray-400/20" />
+          <div className="absolute left-[-20%] top-[68%] h-20 w-[140%] -rotate-12 rounded-full border-t border-gray-400/30" />
+        </div>
+
+        <div className="absolute left-4 top-4 rounded-xl bg-white px-4 py-3 shadow-sm">
+          <p className="text-sm font-extrabold text-gray-700">
+            3 Active Reports
+          </p>
+          <p className="mt-1 text-[11px] font-semibold text-gray-500">
+            Within 2km radius
+          </p>
+        </div>
+
+        <span className="absolute left-[34%] top-[52%] h-3 w-3 rounded-full bg-orange-500 ring-4 ring-orange-500/10" />
+        <span className="absolute right-[15%] top-[32%] h-3 w-3 rounded-full bg-green-800 ring-4 ring-green-800/10" />
+
+        <Link
+          to="/map"
+          className="absolute bottom-5 right-4 flex items-center gap-2 rounded-2xl bg-green-800 px-5 py-3 text-sm font-extrabold text-white shadow-md"
+        >
+          <Map size={16} />
+          View Map
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function CommunityReportCard({
+  image,
+  title,
+  location,
+  status,
+  badge,
+  badgeColor,
+  dotColor,
+}) {
+  return (
+    <Link
+      to="/community-reports"
+      className="flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm transition hover:scale-[1.01]"
+    >
+      <img
+        src={image}
+        alt={title}
+        className="h-20 w-20 shrink-0 rounded-xl object-cover"
+      />
+
+      <div className="min-w-0 flex-1">
+        <div className="flex items-start justify-between gap-3">
+          <h4 className="line-clamp-1 text-base font-extrabold text-gray-900">
+            {title}
+          </h4>
+
+          <span
+            className={`shrink-0 rounded-full px-3 py-1 text-[10px] font-bold ${badgeColor}`}
+          >
+            {badge}
+          </span>
+        </div>
+
+        <p className="mt-1 line-clamp-1 text-sm font-medium text-gray-700">
+          {location}
+        </p>
+
+        <div className="mt-2 flex items-center gap-2">
+          <span className={`h-2 w-2 rounded-full ${dotColor}`} />
+          <p className="text-[11px] font-medium text-gray-600">{status}</p>
+        </div>
+      </div>
+    </Link>
   );
 }
 
@@ -324,25 +589,5 @@ function PriorityItem({ title, area }) {
         High
       </span>
     </div>
-  );
-}
-
-function ReportRow({ issue, barangay, priority, status, date }) {
-  return (
-    <tr className="border-t border-gray-100">
-      <td className="px-5 py-4 font-semibold text-gray-800">{issue}</td>
-      <td className="px-5 py-4 text-gray-500">{barangay}</td>
-      <td className="px-5 py-4">
-        <span className="rounded-full bg-yellow-100 px-3 py-1 text-xs font-bold text-yellow-700">
-          {priority}
-        </span>
-      </td>
-      <td className="px-5 py-4">
-        <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700">
-          {status}
-        </span>
-      </td>
-      <td className="px-5 py-4 text-gray-500">{date}</td>
-    </tr>
   );
 }
