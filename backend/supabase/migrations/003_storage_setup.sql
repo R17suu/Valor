@@ -1,0 +1,60 @@
+-- VALOR Backend - Storage Setup
+-- Creates storage buckets and policies for file uploads
+
+-- Note: Storage buckets and policies are typically managed through the Supabase UI
+-- or via the Supabase Management API. This file documents the required setup.
+
+-- ============================================================================
+-- STORAGE BUCKETS CONFIGURATION
+-- ============================================================================
+--
+-- 1. reports-images
+--    - Purpose: Store citizen-submitted report photos
+--    - Public: TRUE (for displaying images)
+--    - Max file size: 10MB recommended
+--    - Allowed types: image/jpeg, image/png, image/webp
+--
+-- 2. incident-files
+--    - Purpose: Store incident-related documents, updates, evidence
+--    - Public: FALSE (requires authentication to view)
+--    - Max file size: 50MB recommended
+--    - Allowed types: application/pdf, image/*, text/plain, etc.
+--
+-- ============================================================================
+-- MANUAL SETUP INSTRUCTIONS (via Supabase Dashboard)
+-- ============================================================================
+--
+-- Step 1: Create reports-images bucket
+--   - Go to Supabase Dashboard → Storage
+--   - Click "New Bucket"
+--   - Name: reports-images
+--   - Set Public: ON
+--
+-- Step 2: Create incident-files bucket
+--   - Click "New Bucket" again
+--   - Name: incident-files
+--   - Set Public: OFF
+--
+-- Step 3: Add RLS Policies
+--   - For reports-images:
+--     * SELECT: Public access (no policy needed - public bucket)
+--     * INSERT: Authenticated users only
+--   - For incident-files:
+--     * SELECT: LGU officers only
+--     * INSERT: LGU officers only
+--
+-- ============================================================================
+-- OPTIONAL: CLI COMMANDS (if using Supabase CLI)
+-- ============================================================================
+--
+-- supabase storage create reports-images --public
+-- supabase storage create incident-files --private
+--
+-- ============================================================================
+-- NOTES FOR DEPLOYMENT
+-- ============================================================================
+-- - Storage buckets MUST be created manually via UI or CLI before deployment
+-- - This migration file is for documentation only
+-- - Ensure RLS policies are properly configured in Supabase Dashboard
+-- - Test file uploads and access permissions before going live
+-- ============================================================================
