@@ -1,10 +1,9 @@
 // src/Citizen/ReportIssue.jsx
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   Camera,
-  Upload,
   ImagePlus,
   LocateFixed,
   Send,
@@ -15,55 +14,163 @@ import {
   Building2,
   Zap,
   AlertTriangle,
-  ChevronRight,
+  Loader,
 } from "lucide-react";
 import CitizenLayout from "../Layouts/CitizenLayouts";
-
-const aiResult = {
-  title: "Large pothole detected along National Highway",
-  description:
-    "The uploaded photo appears to show a large pothole on the road. This may cause safety risks for vehicles, motorcycles, and pedestrians, especially during night time or rainy weather.",
-  category: "Pothole / Road Damage",
-  priority: "High",
-  department: "City Engineering Office",
-  location: "National Highway, Poblacion, Valencia City",
-};
+import { uploadToCloudinary } from "../services/cloudinaryApi";
+import { callDraftReport, createReport } from "../services/reportApi";
+import { getMockGPSLocation } from "../services/gps";
+import garbageSampleImg from "../assets/garbage-sample.jpg";
 
 export default function ReportIssue() {
   const [step, setStep] = useState(1);
-  const [hasPhoto, setHasPhoto] = useState(false);
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
+  const [aiResult, setAiResult] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [reportId, setReportId] = useState(null);
+  const [gpsLocation, setGpsLocation] = useState(null);
+  const [formData, setFormData] = useState({});
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
-  const handlePhotoNext = () => {
-    if (!hasPhoto) return;
-    setStep(2);
+  const handlePhotoSelect = (file) => {
+    setPhotoFile(file);
+    const reader = new FileReader();
+    reader.onload = (e) => setPhotoPreview(e.target.result);
+    reader.readAsDataURL(file);
   };
 
-  const handleSubmit = () => {
-    setStep(3);
+  const handleUseMockSample = () => {
+    fetch(garbageSampleImg)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const file = new File([blob], "garbage-sample.jpg", {
+          type: "image/jpeg",
+        });
+        handlePhotoSelect(file);
+      });
+  };
+
+  const handlePhotoNext = async () => {
+    if (!photoFile) return;
+
+    setIsLoading(true);
+    try {
+      const location = getMockGPSLocation();
+      setGpsLocation(location);
+
+      const uploadResult = await uploadToCloudinary(photoFile);
+      if (!uploadResult.success) {
+        alert("Failed to upload image: " + uploadResult.error);
+        setIsLoading(false);
+        return;
+      }
+
+      const photoUrl = uploadResult.url;
+      const aiResponse = await callDraftReport(
+        photoUrl,
+        location.latitude,
+        location.longitude,
+      );
+
+      if (!aiResponse.success) {
+        alert("Failed to analyze photo: " + aiResponse.error);
+        setIsLoading(false);
+        return;
+      }
+
+      const formattedAiResult = {
+        photoUrl,
+        title: aiResponse.data.suggested_title,
+        description: aiResponse.data.description,
+        category: aiResponse.data.category,
+        priority: aiResponse.data.priority,
+        department: aiResponse.data.department,
+        confidence: aiResponse.data.confidence,
+        location: `${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}`,
+      };
+
+      setAiResult(formattedAiResult);
+      setFormData({
+        title: formattedAiResult.title,
+        description: formattedAiResult.description,
+        category: formattedAiResult.category,
+        priority: formattedAiResult.priority,
+        department: formattedAiResult.department,
+      });
+      setStep(2);
+    } catch (error) {
+      console.error("Error processing photo:", error);
+      alert("An error occurred: " + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!aiResult || !gpsLocation) return;
+
+    setIsLoading(true);
+    try {
+      const result = await createReport({
+        title: formData.title || aiResult.title,
+        description: formData.description || aiResult.description,
+        category: formData.category || aiResult.category,
+        priority: (formData.priority || aiResult.priority).toLowerCase(),
+        department: formData.department || aiResult.department,
+        photo_url: aiResult.photoUrl,
+        latitude: gpsLocation.latitude,
+        longitude: gpsLocation.longitude,
+      });
+
+      if (!result.success) {
+        alert("Failed to create report: " + result.error);
+        setIsLoading(false);
+        return;
+      }
+
+      setReportId(result.data.id);
+      setStep(3);
+    } catch (error) {
+      console.error("Error submitting report:", error);
+      alert("An error occurred: " + error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <CitizenLayout>
+      {isLoading && <LoadingScreen />}
+
       {/* Mobile View */}
       <div className="lg:hidden">
         {step === 1 && (
           <UploadPhotoStep
-            hasPhoto={hasPhoto}
-            setHasPhoto={setHasPhoto}
-            onNext={handlePhotoNext}
+            photoFile={photoFile}
+            photoPreview={photoPreview}
+            onPhotoSelect={handlePhotoSelect}
+            onPhotoNext={handlePhotoNext}
+            onUseMockSample={handleUseMockSample}
+            fileInputRef={fileInputRef}
             onBack={() => navigate("/home")}
+            isLoading={isLoading}
           />
         )}
 
         {step === 2 && (
           <AIReviewStep
+            aiResult={aiResult}
+            formData={formData}
+            setFormData={setFormData}
             onSubmit={handleSubmit}
             onBack={() => setStep(1)}
+            isLoading={isLoading}
           />
         )}
 
-        {step === 3 && <ReportSubmitted />}
+        {step === 3 && <ReportSubmitted reportId={reportId} />}
       </div>
 
       {/* Desktop View */}
@@ -86,14 +193,14 @@ export default function ReportIssue() {
               />
               <FlowItem
                 number="2"
-                title="AI Generated Report"
-                desc="AI fills the title, category, description, priority, and department."
+                title="Edit Details"
+                desc="Review and edit the AI suggested fields if needed."
                 active={step === 2}
               />
               <FlowItem
                 number="3"
                 title="Submit Report"
-                desc="Review the generated report and send it to the LGU."
+                desc="Send your report to the LGU."
                 active={step === 3}
               />
             </div>
@@ -102,23 +209,31 @@ export default function ReportIssue() {
           <main className="col-span-8 rounded-3xl bg-white p-6 shadow-sm">
             {step === 1 && (
               <UploadPhotoStep
-                hasPhoto={hasPhoto}
-                setHasPhoto={setHasPhoto}
-                onNext={handlePhotoNext}
+                photoFile={photoFile}
+                photoPreview={photoPreview}
+                onPhotoSelect={handlePhotoSelect}
+                onPhotoNext={handlePhotoNext}
+                onUseMockSample={handleUseMockSample}
+                fileInputRef={fileInputRef}
                 onBack={() => navigate("/home")}
                 desktop
+                isLoading={isLoading}
               />
             )}
 
             {step === 2 && (
               <AIReviewStep
+                aiResult={aiResult}
+                formData={formData}
+                setFormData={setFormData}
                 onSubmit={handleSubmit}
                 onBack={() => setStep(1)}
                 desktop
+                isLoading={isLoading}
               />
             )}
 
-            {step === 3 && <DesktopSubmitted />}
+            {step === 3 && <DesktopSubmitted reportId={reportId} />}
           </main>
         </section>
       </div>
@@ -126,23 +241,47 @@ export default function ReportIssue() {
   );
 }
 
-function UploadPhotoStep({ hasPhoto, setHasPhoto, onNext, onBack, desktop = false }) {
+function UploadPhotoStep({
+  photoFile,
+  photoPreview,
+  onPhotoSelect,
+  onPhotoNext,
+  onUseMockSample,
+  fileInputRef,
+  onBack,
+  desktop = false,
+  isLoading = false,
+}) {
+  const handleFileInput = (e) => {
+    const file = e.target.files?.[0];
+    if (file) onPhotoSelect(file);
+  };
+
   return (
     <div>
       <main className={desktop ? "" : "px-5 pt-6"}>
-        <h2 className="text-xl font-extrabold text-gray-900">
-          Take or upload a picture
-        </h2>
+        <div className="flex items-center gap-2 mb-4">
+          <button
+            onClick={onBack}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <h2 className="text-xl font-extrabold text-gray-900">
+            Take or upload a picture
+          </h2>
+        </div>
         <p className="mt-2 text-sm text-gray-500">
-          VALOR AI will analyze the photo and automatically fill the report details.
+          VALOR AI will analyze the photo and automatically fill the report
+          details.
         </p>
 
         <div className="mt-6 rounded-3xl border-2 border-dashed border-green-200 bg-green-50 p-5 text-center">
-          {hasPhoto ? (
+          {photoPreview ? (
             <div className="overflow-hidden rounded-2xl">
               <img
-                src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?q=80&w=700&auto=format&fit=crop"
-                alt="Uploaded issue"
+                src={photoPreview}
+                alt="Selected issue"
                 className="h-64 w-full object-cover"
               />
             </div>
@@ -163,106 +302,191 @@ function UploadPhotoStep({ hasPhoto, setHasPhoto, onNext, onBack, desktop = fals
           <div className="mt-5 grid grid-cols-2 gap-3">
             <button
               type="button"
-              onClick={() => setHasPhoto(true)}
-              className="flex items-center justify-center gap-2 rounded-2xl bg-green-700 py-4 text-sm font-extrabold text-white hover:bg-green-800"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isLoading}
+              className="flex items-center justify-center gap-2 rounded-2xl bg-green-700 py-4 text-sm font-extrabold text-white hover:bg-green-800 disabled:bg-gray-400"
             >
               <Camera size={18} />
-              Take Photo
+              Choose Photo
             </button>
 
             <button
               type="button"
-              onClick={() => setHasPhoto(true)}
-              className="flex items-center justify-center gap-2 rounded-2xl bg-white py-4 text-sm font-extrabold text-green-700 shadow-sm hover:bg-green-50"
+              onClick={onUseMockSample}
+              disabled={isLoading}
+              className="flex items-center justify-center gap-2 rounded-2xl bg-gray-200 py-4 text-sm font-extrabold text-gray-700 hover:bg-gray-300 disabled:bg-gray-400"
             >
-              <Upload size={18} />
-              Upload
+              <Sparkles size={18} />
+              Use Sample
             </button>
           </div>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileInput}
+            className="hidden"
+          />
         </div>
 
         <button
-          onClick={onNext}
-          disabled={!hasPhoto}
+          onClick={onPhotoNext}
+          disabled={!photoFile || isLoading}
           className={`mt-6 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-extrabold text-white transition ${
-            hasPhoto ? "bg-green-700 hover:bg-green-800" : "bg-gray-300"
+            photoFile && !isLoading
+              ? "bg-green-700 hover:bg-green-800"
+              : "bg-gray-300 cursor-not-allowed"
           }`}
         >
-          Analyze Photo with AI
-          <Sparkles size={18} />
+          {isLoading ? (
+            <>
+              <Loader size={18} className="animate-spin" />
+              Processing...
+            </>
+          ) : (
+            <>
+              Analyze Photo with AI
+              <Sparkles size={18} />
+            </>
+          )}
         </button>
       </main>
     </div>
   );
 }
 
-function AIReviewStep({ onSubmit, desktop = false }) {
+function AIReviewStep({
+  aiResult,
+  formData,
+  setFormData,
+  onSubmit,
+  onBack,
+  desktop = false,
+  isLoading = false,
+}) {
+  if (!aiResult) {
+    return (
+      <div className={desktop ? "" : "px-5 pt-5"}>Loading AI analysis...</div>
+    );
+  }
+
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   return (
     <div>
       <main className={desktop ? "" : "px-5 pt-5"}>
-        <section className="rounded-3xl bg-green-50 p-5">
-          <div className="flex items-center gap-2 text-green-700">
-            <Sparkles size={18} />
-            <h3 className="text-sm font-extrabold">
-              AI automatically analyzed your photo
-            </h3>
+        <div className="flex items-center gap-2 mb-4">
+          <button
+            onClick={onBack}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <h2 className="text-xl font-extrabold text-gray-900">
+            Review Report Details
+          </h2>
+        </div>
+
+        {aiResult.photoUrl && (
+          <div className="mb-4 overflow-hidden rounded-2xl">
+            <img
+              src={aiResult.photoUrl}
+              alt="Report issue"
+              className="h-48 w-full object-cover"
+            />
           </div>
+        )}
 
-          <p className="mt-2 text-sm text-green-800">
-            The fields below were generated based on the uploaded image. You can review them before submitting.
-          </p>
-
-          <div className="mt-5 space-y-4">
-            <AIField
-              icon={<FileText size={18} />}
-              label="Generated Title"
-              value={aiResult.title}
-            />
-
-            <AIField
-              icon={<AlertTriangle size={18} />}
-              label="Generated Description"
-              value={aiResult.description}
-            />
-
-            <div className="grid grid-cols-2 gap-3">
-              <AIField
-                icon={<FileText size={18} />}
-                label="Category"
-                value={aiResult.category}
-              />
-
-              <AIField
-                icon={<Zap size={18} />}
-                label="Priority"
-                value={aiResult.priority}
-              />
-            </div>
-
-            <AIField
-              icon={<Building2 size={18} />}
-              label="Assigned Department"
-              value={aiResult.department}
-            />
+        <section className="rounded-2xl bg-green-50 p-3 mb-5 border-l-4 border-green-700">
+          <div className="flex items-center gap-2 text-green-700">
+            <Sparkles size={14} />
+            <p className="text-xs font-semibold">
+              AI suggested these details. Edit any field before submitting.
+            </p>
           </div>
         </section>
 
-        <section className="mt-5">
-          <label className="text-xs font-bold text-gray-600">Location</label>
+        <form className="space-y-3">
+          <EditableField
+            icon={<FileText size={18} />}
+            label="Title"
+            value={formData.title || aiResult.title}
+            onChange={(val) => handleChange("title", val)}
+          />
 
+          <EditableField
+            icon={<AlertTriangle size={18} />}
+            label="Description"
+            value={formData.description || aiResult.description}
+            onChange={(val) => handleChange("description", val)}
+            textarea
+          />
+
+          <div className="flex flex-col gap-3 md:grid md:grid-cols-2">
+            <EditableField
+              icon={<FileText size={18} />}
+              label="Category"
+              value={formData.category || aiResult.category}
+              onChange={(val) => handleChange("category", val)}
+              isSelect
+              options={[
+                "Potholes",
+                "Road Damage",
+                "Flooding",
+                "Illegal Dumping",
+                "Garbage Accumulation",
+                "Broken Streetlights",
+                "Fallen Trees",
+                "Water Service Issues",
+                "Public Safety Concerns",
+              ]}
+            />
+
+            <EditableField
+              icon={<Zap size={18} />}
+              label="Priority"
+              value={formData.priority || aiResult.priority}
+              onChange={(val) => handleChange("priority", val)}
+              isSelect
+              options={["critical", "high", "medium", "low"]}
+            />
+          </div>
+
+          <EditableField
+            icon={<Building2 size={18} />}
+            label="Department"
+            value={formData.department || aiResult.department}
+            onChange={(val) => handleChange("department", val)}
+            isSelect
+            options={[
+              "Engineering Office",
+              "CENRO",
+              "Disaster Risk Reduction",
+              "Water District",
+              "Public Safety",
+            ]}
+          />
+        </form>
+
+        <section className="mt-5">
+          <label className="text-xs font-bold text-gray-600">
+            Location (GPS Mock)
+          </label>
           <div className="mt-2 overflow-hidden rounded-xl border border-gray-200">
-            <div className="relative h-36 bg-[#EAF2EA]">
+            <div className="relative h-36 bg-green-50">
               <div className="absolute left-[-10%] top-[30%] h-10 w-[120%] rotate-[-8deg] bg-white/70" />
               <div className="absolute left-[40%] top-[-10%] h-[130%] w-10 rotate-[15deg] bg-white/70" />
-              <div className="absolute right-6 top-5 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
-                <div className="h-4 w-4 rounded-full bg-blue-500 ring-8 ring-blue-200" />
+              <div className="absolute right-6 top-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                <div className="h-4 w-4 rounded-full bg-green-700 ring-8 ring-green-200" />
               </div>
               <MapPin
                 size={38}
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 fill-red-600 text-red-600"
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 fill-green-700 text-green-700"
               />
             </div>
-
             <div className="flex items-center justify-between bg-white px-4 py-3">
               <p className="text-xs font-extrabold text-gray-800">
                 {aiResult.location}
@@ -275,26 +499,124 @@ function AIReviewStep({ onSubmit, desktop = false }) {
         <button
           type="button"
           onClick={onSubmit}
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-green-700 py-4 text-sm font-extrabold text-white hover:bg-green-800"
+          disabled={isLoading}
+          className={`mt-6 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-extrabold text-white transition ${
+            !isLoading
+              ? "bg-green-700 hover:bg-green-800"
+              : "bg-gray-400 cursor-not-allowed"
+          }`}
         >
-          <Send size={17} />
-          Submit Report
+          {isLoading ? (
+            <>
+              <Loader size={18} className="animate-spin" />
+              Submitting...
+            </>
+          ) : (
+            <>
+              <Send size={17} />
+              Submit Report
+            </>
+          )}
         </button>
       </main>
     </div>
   );
 }
 
-function AIField({ icon, label, value }) {
+function EditableField({
+  icon,
+  label,
+  value,
+  onChange,
+  textarea = false,
+  isSelect = false,
+  options = [],
+}) {
+  const getPriorityColors = (val) => {
+    if (label === "Priority") {
+      if (val === "critical" || val === "high") {
+        return {
+          border: "border-red-300",
+          text: "text-red-700",
+          bg: "bg-red-50",
+        };
+      }
+      if (val === "medium") {
+        return {
+          border: "border-yellow-300",
+          text: "text-yellow-700",
+          bg: "bg-yellow-50",
+        };
+      }
+      if (val === "low") {
+        return {
+          border: "border-green-300",
+          text: "text-green-700",
+          bg: "bg-green-50",
+        };
+      }
+    }
+    return { border: "border-gray-300", text: "text-gray-900", bg: "bg-white" };
+  };
+
+  const priorityColors = getPriorityColors(value);
+
   return (
-    <div className="rounded-2xl bg-white p-4">
-      <div className="flex items-center gap-2 text-green-700">
+    <div className="rounded-lg bg-white border border-gray-200 p-3">
+      <div className="flex items-center gap-2 text-gray-700 mb-2">
         {icon}
-        <p className="text-xs font-bold uppercase tracking-wide">{label}</p>
+        <label className="text-xs font-bold uppercase tracking-wide text-gray-700">
+          {label}
+        </label>
       </div>
-      <p className="mt-2 text-sm font-extrabold leading-6 text-gray-900">
-        {value}
-      </p>
+      {isSelect ? (
+        <div className="relative">
+          <select
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className={`w-full text-sm font-semibold rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none pr-10 ${
+              label === "Priority"
+                ? `${priorityColors.bg} ${priorityColors.border} ${priorityColors.text}`
+                : "bg-white border-gray-300 text-gray-900"
+            }`}
+          >
+            {options.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-600">
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 14l-7 7m0 0l-7-7m7 7V3"
+              />
+            </svg>
+          </div>
+        </div>
+      ) : textarea ? (
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          rows={3}
+          className="w-full text-sm font-semibold text-gray-900 rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      ) : (
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full text-sm font-semibold text-gray-900 rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      )}
     </div>
   );
 }
@@ -303,13 +625,13 @@ function FlowItem({ number, title, desc, active }) {
   return (
     <div
       className={`rounded-2xl p-4 ${
-        active ? "bg-green-600 text-white" : "bg-green-800/70 text-green-50"
+        active ? "bg-green-700 text-white" : "bg-gray-100 text-gray-700"
       }`}
     >
       <div className="flex items-start gap-3">
         <div
           className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-extrabold ${
-            active ? "bg-white text-green-700" : "bg-green-700 text-white"
+            active ? "bg-white text-green-700" : "bg-gray-300 text-gray-700"
           }`}
         >
           {number}
@@ -323,12 +645,23 @@ function FlowItem({ number, title, desc, active }) {
   );
 }
 
-function ReportSubmitted() {
+function ReportSubmitted({ reportId }) {
   const navigate = useNavigate();
+  const now = new Date();
+  const formattedDate = now.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+  const formattedTime = now.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
 
   return (
     <div className="px-5 pt-6">
-      <section className="relative overflow-hidden rounded-3xl bg-green-800 px-5 py-8 text-center text-white shadow-sm">
+      <div className="rounded-3xl bg-green-700 px-5 py-8 text-center text-white shadow-sm">
         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white text-green-700">
           <Check size={44} strokeWidth={4} />
         </div>
@@ -336,29 +669,36 @@ function ReportSubmitted() {
         <h1 className="mt-6 text-3xl font-extrabold">Thank you!</h1>
         <p className="mt-4 text-sm font-semibold leading-6 text-green-50">
           Your report has been submitted. <br />
-          We’ll notify you once there are updates.
+          We'll notify you once there are updates.
         </p>
 
         <div className="mt-8 rounded-2xl bg-white p-5 text-left text-gray-900">
-          <InfoBlock label="Report ID" value="#VAL-2024-00123" large />
-          <InfoBlock label="Submitted" value="June 8, 2025 · 9:41 AM" />
-          <InfoBlock label="Location" value={aiResult.location} />
+          <InfoBlock
+            label="Report ID"
+            value={reportId || "#VAL-2024-00001"}
+            large
+          />
+          <InfoBlock
+            label="Submitted"
+            value={`${formattedDate} · ${formattedTime}`}
+          />
+          <InfoBlock label="Status" value="Under Review" />
         </div>
 
         <button
           onClick={() => navigate("/reports")}
-          className="mt-6 w-full rounded-xl bg-white py-3 text-sm font-extrabold text-green-700"
+          className="mt-6 w-full rounded-xl bg-white py-3 text-sm font-extrabold text-green-700 hover:bg-green-50"
         >
           View My Reports
         </button>
 
         <button
           onClick={() => navigate("/home")}
-          className="mt-3 w-full rounded-xl bg-green-600 py-3 text-sm font-extrabold text-white"
+          className="mt-3 w-full rounded-xl bg-green-600 py-3 text-sm font-extrabold text-white hover:bg-green-800"
         >
           Back to Home
         </button>
-      </section>
+      </div>
     </div>
   );
 }
@@ -368,9 +708,7 @@ function InfoBlock({ label, value, large = false }) {
     <div className="mb-4 last:mb-0">
       <p className="text-xs font-bold text-gray-500">{label}</p>
       <p
-        className={`font-extrabold text-gray-900 ${
-          large ? "text-xl" : "text-sm"
-        }`}
+        className={`font-extrabold text-gray-900 ${large ? "text-xl" : "text-sm"}`}
       >
         {value}
       </p>
@@ -378,24 +716,69 @@ function InfoBlock({ label, value, large = false }) {
   );
 }
 
-function DesktopSubmitted() {
+function DesktopSubmitted({ reportId }) {
+  const navigate = useNavigate();
+  const now = new Date();
+  const formattedDate = now.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+  const formattedTime = now.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
   return (
     <div className="flex min-h-150 items-center justify-center">
-      <div className="w-full max-w-md rounded-3xl bg-green-800 p-8 text-center text-white">
+      <div className="w-full max-w-md rounded-3xl bg-green-700 p-8 text-center text-white">
         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white text-green-700">
           <Check size={44} strokeWidth={4} />
         </div>
 
         <h1 className="mt-6 text-3xl font-extrabold">Thank you!</h1>
         <p className="mt-4 text-sm font-semibold leading-6 text-green-50">
-          Your report has been submitted. We’ll notify you once there are updates.
+          Your report has been submitted. We'll notify you once there are
+          updates.
         </p>
 
         <div className="mt-8 rounded-2xl bg-white p-5 text-left text-gray-900">
-          <InfoBlock label="Report ID" value="#VAL-2024-00123" large />
-          <InfoBlock label="Submitted" value="June 8, 2025 · 9:41 AM" />
-          <InfoBlock label="Location" value={aiResult.location} />
+          <InfoBlock
+            label="Report ID"
+            value={reportId || "#VAL-2024-00001"}
+            large
+          />
+          <InfoBlock
+            label="Submitted"
+            value={`${formattedDate} · ${formattedTime}`}
+          />
+          <InfoBlock label="Status" value="Under Review" />
         </div>
+
+        <button
+          onClick={() => navigate("/home")}
+          className="mt-6 w-full rounded-xl bg-white py-3 text-sm font-extrabold text-green-700 hover:bg-green-50"
+        >
+          Back to Home
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function LoadingScreen() {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="rounded-3xl bg-white p-8 text-center">
+        <Loader
+          size={48}
+          className="mx-auto mb-4 animate-spin text-green-700"
+        />
+        <h2 className="text-xl font-extrabold text-gray-900">Hold on...</h2>
+        <p className="mt-2 text-sm text-gray-500">
+          We're uploading your photo and analyzing it with AI
+        </p>
       </div>
     </div>
   );
