@@ -1,10 +1,34 @@
 // src/layouts/CitizenLayout.jsx
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Home, ClipboardList, Map, User, Plus, Menu, Bell } from "lucide-react";
+import { Home, ClipboardList, Map, User, Plus, Bell } from "lucide-react";
 import ApplicationLogo from "../Components/ApplicationLogo";
 import ValorLogo from "@/assets/valor.png";
 
 export default function CitizenLayout({ children }) {
+  const [notificationOpen, setNotificationOpen] = useState(false);
+
+  const notifications = [
+    {
+      id: 1,
+      message: "Your report is now under review",
+      time: "5 min ago",
+      unread: true,
+    },
+    {
+      id: 2,
+      message: "City Engineering accepted your report",
+      time: "1 hour ago",
+      unread: true,
+    },
+    {
+      id: 3,
+      message: "New community update in your barangay",
+      time: "2 hours ago",
+      unread: false,
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-[#F4F7F5] text-gray-900">
       {/* Mobile Layout Wrapper */}
@@ -31,9 +55,51 @@ export default function CitizenLayout({ children }) {
             </div>
           </div>
 
-          <button className="rounded-lg p-2 hover:bg-gray-100">
-            <Bell size={22} />
-          </button>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setNotificationOpen(!notificationOpen)}
+              className="relative rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
+              aria-label="Open notifications"
+            >
+              <Bell className="h-5 w-5" />
+              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-semibold text-white">
+                {notifications.length}
+              </span>
+            </button>
+
+            {notificationOpen && (
+              <div className="absolute right-0 z-30 mt-2 w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-md">
+                <div className="border-b border-zinc-200 px-4 py-3">
+                  <h3 className="font-semibold text-zinc-900">Notifications</h3>
+                </div>
+
+                <div className="max-h-80 overflow-y-auto">
+                  {notifications.map((notification) => (
+                    <div
+                      key={notification.id}
+                      className={`border-b border-zinc-100 px-4 py-3 hover:bg-zinc-50 ${
+                        notification.unread ? "bg-green-50/50" : ""
+                      }`}
+                    >
+                      <p className="text-sm font-medium text-zinc-900">
+                        {notification.message}
+                      </p>
+                      <p className="mt-1 text-xs text-zinc-500">
+                        {notification.time}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="border-t border-zinc-200 px-4 py-3 text-center">
+                  <button className="text-sm font-semibold text-green-700 hover:text-green-800">
+                    View all notifications
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </header>
 
         {/* Page Content */}
