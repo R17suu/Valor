@@ -141,34 +141,6 @@ export default function Reports() {
           </div>
         </header>
 
-        {/* Stats */}
-        {/* <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <ReportStat
-            title="Total Reports"
-            value="1,245"
-            icon={<AlertTriangle size={24} />}
-            color="bg-green-100 text-green-700"
-          />
-          <ReportStat
-            title="Pending Review"
-            value="234"
-            icon={<Clock size={24} />}
-            color="bg-yellow-100 text-yellow-700"
-          />
-          <ReportStat
-            title="In Progress"
-            value="567"
-            icon={<Wrench size={24} />}
-            color="bg-blue-100 text-blue-700"
-          />
-          <ReportStat
-            title="Resolved"
-            value="444"
-            icon={<CheckCircle size={24} />}
-            color="bg-green-100 text-green-700"
-          />
-        </section> */}
-
         {/* Filters */}
         <section className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
           <div className="grid gap-4 lg:grid-cols-[1fr_auto_auto_auto]">
@@ -176,7 +148,7 @@ export default function Reports() {
               <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search report ID, issue, location, barangay..."
+                placeholder="Search issue, location, barangay..."
                 className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 text-sm outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700"
               />
             </div>
@@ -207,7 +179,7 @@ export default function Reports() {
             </div>
 
             <div className="mt-5 overflow-x-auto">
-              <table className="w-full min-w-[950px] text-left text-sm">
+              <table className="w-full min-w-176 text-left text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 text-xs text-gray-400">
                     <th className="px-3 py-3 font-bold">Report</th>
@@ -215,7 +187,6 @@ export default function Reports() {
                     <th className="px-3 py-3 font-bold">Category</th>
                     <th className="px-3 py-3 font-bold">Priority</th>
                     <th className="px-3 py-3 font-bold">Status</th>
-                    <th className="px-3 py-3 font-bold">Department</th>
                     <th className="px-3 py-3 font-bold">Action</th>
                   </tr>
                 </thead>
@@ -254,15 +225,6 @@ export default function Reports() {
                 />
 
                 <div className="mt-5 space-y-4">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-wide text-gray-400">
-                      Report ID
-                    </p>
-                    <h3 className="mt-1 text-lg font-extrabold text-gray-900">
-                      {selectedReport.id}
-                    </h3>
-                  </div>
-
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wide text-gray-400">
                       Issue
@@ -320,11 +282,6 @@ export default function Reports() {
                   </InfoBox>
 
                   <div className="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2">
-                    <button className="flex items-center justify-center gap-2 rounded-xl bg-green-700 px-4 py-3 text-sm font-bold text-white hover:bg-green-800">
-                      <UserCheck size={17} />
-                      Assign
-                    </button>
-
                     <button className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700">
                       <Eye size={17} />
                       View
@@ -390,9 +347,8 @@ function ReportRow({ report, selected, onClick }) {
             alt={report.title}
             className="h-12 w-12 rounded-lg object-cover"
           />
-          <div>
-            <p className="text-xs font-bold text-gray-400">{report.id}</p>
-            <p className="font-extrabold text-gray-900">{report.title}</p>
+          <div className="min-w-0 max-w-72">
+            <p className="truncate font-semibold text-gray-900">{report.title}</p>
             <p className="text-xs text-gray-500">
               {report.date} · {report.time}
             </p>
@@ -401,8 +357,7 @@ function ReportRow({ report, selected, onClick }) {
       </td>
 
       <td className="px-3 py-4">
-        <p className="font-bold text-gray-700">{report.barangay}</p>
-        <p className="text-xs text-gray-500">{report.location}</p>
+        <p className="font-semibold text-gray-700">{report.barangay}</p>
       </td>
 
       <td className="px-3 py-4">
@@ -415,10 +370,6 @@ function ReportRow({ report, selected, onClick }) {
 
       <td className="px-3 py-4">
         <StatusBadge status={report.status} />
-      </td>
-
-      <td className="px-3 py-4">
-        <p className="text-sm font-bold text-gray-700">{report.department}</p>
       </td>
 
       <td className="px-3 py-4">

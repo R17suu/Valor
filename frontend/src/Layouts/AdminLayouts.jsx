@@ -6,14 +6,11 @@ import {
   ClipboardList,
   Map,
   Building2,
-  BarChart3,
-  Users,
   Settings,
   MapPin,
   LogOut,
   Menu,
   ChevronDown,
-  Search,
   Calendar,
   Bell,
   User,
@@ -95,7 +92,7 @@ export default function AdminLayout({ children, header }) {
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div className="min-h-screen bg-slate-100/70">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <button
@@ -108,7 +105,7 @@ export default function AdminLayout({ children, header }) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 z-50 flex h-screen w-[min(17.5rem,calc(100vw-1rem))] flex-col bg-white px-5 py-5 shadow-sm transform transition-transform duration-300 ease-in-out lg:w-68 lg:px-6 lg:py-6 lg:translate-x-0 ${
+        className={`fixed left-0 top-0 z-50 flex h-screen w-[min(17.5rem,calc(100vw-1rem))] flex-col border-r border-zinc-200 bg-white px-5 py-5 transform transition-transform duration-300 ease-in-out lg:w-68 lg:px-6 lg:py-6 lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -127,7 +124,7 @@ export default function AdminLayout({ children, header }) {
           </div>
 
           {/* Navigation */}
-          <nav className="mt-10 space-y-2">
+          <nav className="mt-8 space-y-1.5">
             {navigation.map((item) => {
               const Icon = item.icon;
               const isActive = pathname.startsWith(item.href);
@@ -137,10 +134,10 @@ export default function AdminLayout({ children, header }) {
                   key={item.name}
                   to={item.href}
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition ${
+                  className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition ${
                     isActive
-                      ? "bg-green-700 text-white"
-                      : "text-gray-600 hover:bg-green-50 hover:text-green-700"
+                      ? "bg-green-700 text-white shadow-sm"
+                      : "text-zinc-600 hover:bg-zinc-100 hover:text-green-700"
                   }`}
                 >
                   <Icon className="h-5 w-5" />
@@ -152,8 +149,36 @@ export default function AdminLayout({ children, header }) {
 
           {/* Sidebar Footer */}
           <div className="mt-auto">
-            <div className="flex items-center gap-3 rounded-[1.4rem] bg-gradient-to-r from-green-900 via-green-800 to-green-700 px-3.5 py-3 text-white shadow-[0_16px_30px_rgba(20,83,45,0.22)]">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15">
+            <div className="mb-4 space-y-1 border-t border-zinc-200 pt-4 lg:hidden">
+              <Link
+                to="/admin/profile"
+                onClick={() => setSidebarOpen(false)}
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100"
+              >
+                <User className="h-4 w-4" />
+                Profile
+              </Link>
+
+              <Link
+                to="/admin/settings"
+                onClick={() => setSidebarOpen(false)}
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100"
+              >
+                <Settings className="h-4 w-4" />
+                Settings
+              </Link>
+
+              <button
+                type="button"
+                className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </button>
+            </div>
+
+            <div className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 py-3 text-zinc-800">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white ring-1 ring-zinc-200">
                 <img
                   src={CitySeal}
                   alt="City of Valencia seal"
@@ -162,16 +187,16 @@ export default function AdminLayout({ children, header }) {
               </div>
 
               <div className="min-w-0 flex-1">
-                <p className="text-[11px] font-semibold leading-tight text-green-100">
+                <p className="text-[11px] font-medium leading-tight text-zinc-500">
                   City of Valencia
                 </p>
-                <p className="mt-0.5 text-sm font-bold leading-tight text-white">
+                <p className="mt-0.5 text-sm font-semibold leading-tight text-zinc-800">
                   Administrator
                 </p>
               </div>
 
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15">
-                <Info className="h-4 w-4 text-green-50" />
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white ring-1 ring-zinc-200">
+                <Info className="h-4 w-4 text-zinc-500" />
               </div>
             </div>
           </div>
@@ -181,21 +206,22 @@ export default function AdminLayout({ children, header }) {
       {/* Main content */}
       <div className="min-w-0 lg:ml-68">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white shadow-sm">
-          <div className="flex h-16 items-center gap-2.5 px-4 sm:gap-4 sm:px-6">
+        <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white/95 backdrop-blur">
+          <div className="flex h-14 items-center gap-2 px-3 sm:h-16 sm:gap-4 sm:px-6">
             {/* Mobile menu button */}
             <button
               type="button"
               onClick={() => setSidebarOpen(true)}
-              className="text-zinc-500 hover:text-zinc-900 lg:hidden"
+              className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 lg:hidden"
+              aria-label="Open sidebar"
             >
-              <Menu className="h-6 w-6" />
+              <Menu className="h-5 w-5" />
             </button>
 
             {/* Page title */}
             {header && (
-              <div>
-                <h1 className="text-xl font-bold text-zinc-900">{header}</h1>
+              <div className="hidden sm:block">
+                <h1 className="text-lg font-semibold text-zinc-900">{header}</h1>
               </div>
             )}
 
@@ -212,10 +238,10 @@ export default function AdminLayout({ children, header }) {
             </div>
 
             {/* Right section */}
-            <div className="flex items-center gap-1.5 sm:gap-3">
+            <div className="ml-auto flex items-center gap-1 sm:gap-2.5">
               {/* Date range picker (moved from Overview) */}
               <div className="hidden sm:block">
-                <button className="flex items-center gap-2 rounded-xl border border-gray-100 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm">
+                <button className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-xs font-medium text-zinc-700">
                   <Calendar size={17} />
                   June 1 - June 8, 2025
                   <ChevronDown size={16} />
@@ -227,16 +253,17 @@ export default function AdminLayout({ children, header }) {
                 <button
                   type="button"
                   onClick={() => setNotificationOpen(!notificationOpen)}
-                  className="relative rounded-xl p-3 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
+                  className="relative rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 sm:p-2.5"
+                  aria-label="Open notifications"
                 >
-                  <Bell className="h-5 w-5" />
-                  <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
+                  <Bell className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
+                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-semibold text-white sm:h-4.5 sm:w-4.5">
                     {notifications.length}
                   </span>
                 </button>
 
                 {notificationOpen && (
-                  <div className="absolute right-0 mt-2 w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg">
+                  <div className="absolute right-0 mt-2 w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-md">
                     <div className="border-b border-zinc-200 px-4 py-3">
                       <h3 className="font-semibold text-zinc-900">
                         Notifications
@@ -248,7 +275,7 @@ export default function AdminLayout({ children, header }) {
                         <div
                           key={notification.id}
                           className={`border-b border-zinc-100 px-4 py-3 hover:bg-zinc-50 ${
-                            notification.unread ? "bg-green-50/70" : ""
+                            notification.unread ? "bg-green-50/50" : ""
                           }`}
                         >
                           <p className="text-sm font-medium text-zinc-900">
@@ -270,20 +297,14 @@ export default function AdminLayout({ children, header }) {
                 )}
               </div>
 
-              {/* View Public Site Link */}
-              <Link
-                to="/home"
-                className="hidden text-sm font-semibold text-zinc-600 hover:text-green-700 lg:block"
-              >
-                View Site
-              </Link>
 
               {/* Profile dropdown */}
-              <div className="relative">
+              <div className="relative hidden sm:block">
                 <button
                   type="button"
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 rounded-xl px-2 py-2 sm:gap-3 sm:px-3 hover:bg-zinc-100"
+                  className="flex items-center gap-2 rounded-lg px-1.5 py-1.5 sm:gap-3 sm:px-3 sm:py-2 hover:bg-zinc-100"
+                  aria-label="Open user menu"
                 >
                   {auth.user.avatar ? (
                     <img
@@ -293,14 +314,14 @@ export default function AdminLayout({ children, header }) {
                     />
                   ) : (
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-700 text-white">
-                      <span className="text-sm font-semibold">
+                      <span className="text-sm font-medium">
                         {auth.user.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
                   )}
 
                   <div className="hidden text-left lg:block">
-                    <div className="text-sm font-semibold text-zinc-900">
+                    <div className="text-sm font-medium text-zinc-900">
                       {auth.user.name}
                     </div>
                     <div className="text-xs text-zinc-500">{auth.role}</div>
@@ -310,9 +331,9 @@ export default function AdminLayout({ children, header }) {
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-[min(13rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg">
+                  <div className="absolute right-0 mt-2 w-[min(13rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-md">
                     <div className="border-b border-zinc-200 px-4 py-3">
-                      <div className="text-sm font-semibold text-zinc-900">
+                      <div className="text-sm font-medium text-zinc-900">
                         {auth.user.name}
                       </div>
                       <div className="truncate text-xs text-zinc-500">

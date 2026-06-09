@@ -176,19 +176,17 @@ const workloads = [
 export default function Overview() {
   return (
     <AdminLayout>
-      <div className="space-y-4 sm:space-y-6">
+      <div className="space-y-5 sm:space-y-6">
         {/* Header */}
-        <header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <header className="flex flex-col gap-2">
           <div>
-            <h1 className="text-2xl font-extrabold text-gray-900">
+            <h1 className="text-2xl font-semibold text-gray-900">
               LGU Dashboard
             </h1>
             <p className="mt-1 text-sm text-gray-500">
               Real-time overview of citizen reports and city operations
             </p>
           </div>
-
-          <div />
         </header>
 
         {/* Stat Cards */}
@@ -200,9 +198,9 @@ export default function Overview() {
 
         {/* Map and Right Panels */}
         <section className="grid gap-6 xl:grid-cols-12">
-          <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5 xl:col-span-8">
+          <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5 xl:col-span-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <h2 className="text-lg font-extrabold text-gray-900">
+              <h2 className="text-lg font-semibold text-gray-900">
                 Incident Map Overview
               </h2>
             </div>
@@ -212,7 +210,7 @@ export default function Overview() {
               <FilterButton label="All Categories" />
               <FilterButton label="All Statuses" />
 
-              <button className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-xs font-bold text-green-700 sm:ml-auto sm:w-auto">
+              <button className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-xs font-medium text-green-700 sm:ml-auto sm:w-auto">
                 <Eye size={15} />
                 Heatmap View
               </button>
@@ -231,27 +229,27 @@ export default function Overview() {
 
         {/* Reports and Workload */}
         <section className="grid gap-6 xl:grid-cols-12">
-          <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5 xl:col-span-8">
+          <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5 xl:col-span-8">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <h2 className="text-lg font-extrabold text-gray-900">
+              <h2 className="text-lg font-semibold text-gray-900">
                 Recent Reports
               </h2>
-              <button className="text-sm font-bold text-green-600">
+              <button className="text-sm font-medium text-green-700">
                 View All Reports
               </button>
             </div>
 
             <div className="mt-5 overflow-x-auto">
-              <table className="w-full min-w-[820px] text-left text-sm">
+              <table className="w-full min-w-208 text-left text-sm">
                 <thead>
-                  <tr className="border-b border-gray-100 text-xs text-gray-400">
-                    <th className="px-3 py-3 font-bold">ID</th>
-                    <th className="px-3 py-3 font-bold">Issue</th>
-                    <th className="px-3 py-3 font-bold">Location</th>
-                    <th className="px-3 py-3 font-bold">Category</th>
-                    <th className="px-3 py-3 font-bold">Status</th>
-                    <th className="px-3 py-3 font-bold">Reported On</th>
-                    <th className="px-3 py-3 font-bold">Action</th>
+                  <tr className="border-b border-gray-100 text-xs text-gray-500">
+                    <th className="px-3 py-3 font-semibold">ID</th>
+                    <th className="px-3 py-3 font-semibold">Issue</th>
+                    <th className="px-3 py-3 font-semibold">Location</th>
+                    <th className="px-3 py-3 font-semibold">Category</th>
+                    <th className="px-3 py-3 font-semibold">Status</th>
+                    <th className="px-3 py-3 font-semibold">Reported On</th>
+                    <th className="px-3 py-3 font-semibold">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -274,21 +272,21 @@ function StatCard({ stat }) {
   const Icon = stat.icon;
 
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm">
-      <div className="flex items-center gap-4">
+    <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+      <div className="flex items-center gap-3">
         <div
-          className={`flex h-14 w-14 items-center justify-center rounded-full ${stat.color}`}
+          className={`flex h-11 w-11 items-center justify-center rounded-xl ${stat.color}`}
         >
-          <Icon size={24} />
+          <Icon size={20} />
         </div>
 
         <div>
-          <p className="text-sm font-bold text-gray-700">{stat.title}</p>
-          <h3 className="mt-1 text-3xl font-extrabold text-gray-900">
+          <p className="text-sm font-medium text-gray-600">{stat.title}</p>
+          <h3 className="mt-0.5 text-2xl font-semibold text-gray-900">
             {stat.value}
           </h3>
           <p
-            className={`mt-1 text-xs font-bold ${
+            className={`mt-1 text-xs font-medium ${
               stat.note.startsWith("-") || stat.note.startsWith("+1")
                 ? "text-green-600"
                 : "text-orange-500"
@@ -304,7 +302,7 @@ function StatCard({ stat }) {
 
 function FilterButton({ label }) {
   return (
-    <button className="flex w-full min-w-0 items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-4 py-2 text-xs font-bold text-gray-700 sm:min-w-40">
+    <button className="flex w-full min-w-0 items-center justify-between gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-xs font-medium text-gray-700 sm:min-w-40">
       {label}
       <ChevronDown size={15} />
     </button>
@@ -313,19 +311,14 @@ function FilterButton({ label }) {
 
 function MapOverview() {
   return (
-    <div className="relative h-[340px] overflow-hidden rounded-xl bg-[#EAF2EA] sm:h-90">
-      {/* Fake map background */}
-      <div className="absolute inset-0 opacity-80">
-        <div className="absolute left-[-10%] top-[15%] h-20 w-[120%] -rotate-12 bg-white/70" />
-        <div className="absolute left-[-20%] top-[48%] h-16 w-[140%] rotate-18 bg-white/70" />
-        <div className="absolute left-[30%] top-[-10%] h-[120%] w-14 rotate-10 bg-white/70" />
-        <div className="absolute left-[70%] top-[-10%] h-[120%] w-12 rotate-[-20deg] bg-white/70" />
-        <div className="absolute left-[10%] top-[10%] h-56 w-56 rounded-full bg-green-100/70" />
-        <div className="absolute right-[5%] top-[20%] h-60 w-60 rounded-full bg-green-100/70" />
-        <div className="absolute bottom-[10%] left-[22%] h-52 w-52 rounded-full bg-blue-100/40" />
+    <div className="relative h-80 overflow-hidden rounded-xl border border-green-100 bg-linear-to-br from-emerald-50 via-lime-50 to-cyan-50 sm:h-88">
+      <div className="absolute inset-0 opacity-70">
+        <div className="absolute left-[10%] top-[12%] h-56 w-56 rounded-full bg-white/70" />
+        <div className="absolute right-[8%] top-[18%] h-52 w-52 rounded-full bg-white/70" />
+        <div className="absolute bottom-[8%] left-[28%] h-48 w-48 rounded-full bg-cyan-100/40" />
       </div>
 
-      <div className="absolute inset-x-[15%] top-[10%] bottom-[10%] rounded-[45%] border-2 border-dashed border-green-300/80 bg-green-100/20" />
+      <div className="absolute inset-x-[16%] top-[11%] bottom-[10%] rounded-[45%] border border-emerald-200/80 bg-white/20" />
 
       <span className="absolute left-[25%] top-[12%] text-xs font-bold text-gray-800 sm:text-sm">
         Lumbo
@@ -343,18 +336,18 @@ function MapOverview() {
       {mapMarkers.map((marker, index) => (
         <button
           key={index}
-          className={`absolute flex h-10 w-10 items-center justify-center rounded-full text-base font-extrabold text-white shadow-lg ring-4 ring-white/40 sm:h-12 sm:w-12 sm:text-lg sm:ring-8 ${marker.color}`}
+          className={`absolute flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold text-white shadow-md ring-2 ring-white/50 sm:h-10 sm:w-10 sm:text-base ${marker.color}`}
           style={{ top: marker.top, left: marker.left }}
         >
           {marker.count}
         </button>
       ))}
 
-      <div className="absolute bottom-5 left-5 overflow-hidden rounded-lg bg-white shadow-md">
-        <button className="flex h-9 w-9 items-center justify-center border-b border-gray-100 sm:h-10 sm:w-10">
+      <div className="absolute bottom-4 left-4 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+        <button className="flex h-8 w-8 items-center justify-center border-b border-gray-100 sm:h-9 sm:w-9">
           <Plus size={18} />
         </button>
-        <button className="flex h-9 w-9 items-center justify-center sm:h-10 sm:w-10">
+        <button className="flex h-8 w-8 items-center justify-center sm:h-9 sm:w-9">
           <Minus size={18} />
         </button>
       </div>
@@ -364,63 +357,29 @@ function MapOverview() {
 
 function ReportsByCategory() {
   return (
-    <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
+    <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-lg font-extrabold text-gray-900">
+        <h2 className="text-lg font-semibold text-gray-900">
           Reports by Category
         </h2>
-        <button className="text-sm font-bold text-green-600">View All</button>
+        <button className="text-sm font-medium text-green-700">View All</button>
       </div>
 
-      <div className="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
-        <div className="relative mx-auto h-44 w-44 rounded-full bg-[conic-gradient(#dc2626_0_40%,#2563eb_40%_60%,#16a34a_60%_75%,#f97316_75%_85%,#8b5cf6_85%_93%,#6b7280_93%_100%)]">
-          <div className="absolute inset-12 rounded-full bg-white" />
-        </div>
-
-        <div className="space-y-3">
-          {categories.map((category) => (
-            <div
-              key={category.name}
-              className="flex items-start justify-between gap-3 text-sm sm:items-center"
-            >
+      <div className="mt-5 space-y-3.5">
+        {categories.map((category) => (
+          <div key={category.name} className="space-y-2">
+            <div className="flex items-start justify-between gap-3 text-sm sm:items-center">
               <div className="flex min-w-0 items-center gap-2">
-                <span className={`h-4 w-4 rounded-full ${category.color}`} />
-                <span className="font-bold text-gray-700">{category.name}</span>
+                <span className={`h-3.5 w-3.5 rounded-full ${category.color}`} />
+                <span className="font-medium text-gray-700">{category.name}</span>
               </div>
-              <span className="font-bold text-gray-700">{category.percent}</span>
+              <span className="font-medium text-gray-700">{category.percent}</span>
             </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function TopProblemAreas() {
-  return (
-    <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-lg font-extrabold text-gray-900">
-          Top Problem Areas
-        </h2>
-        <button className="text-sm font-bold text-green-600">View All</button>
-      </div>
-
-      <div className="mt-5 space-y-3">
-        {problemAreas.map((item) => (
-          <div
-            key={item.area}
-            className="grid grid-cols-[28px_1fr_auto] items-center gap-2 sm:grid-cols-[32px_1fr_auto_90px] sm:gap-3"
-          >
-            <span
-              className={`flex h-7 w-7 items-center justify-center rounded-md text-xs font-extrabold text-white ${item.color}`}
-            >
-              {item.rank}
-            </span>
-            <p className="font-bold text-gray-800">{item.area}</p>
-            <p className="text-sm font-semibold text-gray-500">{item.reports}</p>
-            <div className="hidden sm:block">
-              <MiniLine color={item.line} />
+            <div className="h-1.5 overflow-hidden rounded-full bg-gray-100">
+              <div
+                className={`h-full rounded-full ${category.color}`}
+                style={{ width: category.percent.split("%")[0] + "%" }}
+              />
             </div>
           </div>
         ))}
@@ -429,32 +388,49 @@ function TopProblemAreas() {
   );
 }
 
-function MiniLine({ color }) {
+function TopProblemAreas() {
   return (
-    <svg viewBox="0 0 100 28" className={`h-8 w-24 ${color}`}>
-      <polyline
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3"
-        points="0,18 8,14 16,17 24,12 32,16 40,11 48,15 56,12 64,19 72,10 80,14 88,8 100,13"
-      />
-    </svg>
+    <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="text-lg font-semibold text-gray-900">
+          Top Problem Areas
+        </h2>
+        <button className="text-sm font-medium text-green-700">View All</button>
+      </div>
+
+      <div className="mt-5 space-y-3">
+        {problemAreas.map((item) => (
+          <div
+            key={item.area}
+            className="grid grid-cols-[28px_1fr_auto] items-center gap-2 sm:grid-cols-[32px_1fr_auto] sm:gap-3"
+          >
+            <span
+              className={`flex h-7 w-7 items-center justify-center rounded-md text-xs font-semibold text-white ${item.color}`}
+            >
+              {item.rank}
+            </span>
+            <p className="font-medium text-gray-800">{item.area}</p>
+            <p className="text-sm font-medium text-gray-500">{item.reports}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
 function ReportRow({ report }) {
   return (
     <tr className="border-b border-gray-100 last:border-b-0">
-      <td className="px-3 py-4 text-xs font-bold text-gray-700">{report.id}</td>
+      <td className="px-3 py-4 text-xs font-medium text-gray-700">{report.id}</td>
       <td className="px-3 py-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <img
             src={report.image}
             alt={report.issue}
-            className="h-12 w-12 rounded-lg object-cover"
+            className="h-10 w-10 rounded-md object-cover"
           />
           <div>
-            <p className="font-extrabold text-gray-900">{report.issue}</p>
+            <p className="font-medium text-gray-900">{report.issue}</p>
             <p className="text-xs text-gray-500">{report.barangay}</p>
           </div>
         </div>
@@ -491,7 +467,7 @@ function CategoryBadge({ category }) {
 
   return (
     <span
-      className={`rounded-lg px-3 py-1 text-xs font-extrabold ${
+      className={`rounded-md px-2.5 py-1 text-xs font-medium ${
         styles[category] || "bg-gray-100 text-gray-700"
       }`}
     >
@@ -511,7 +487,7 @@ function StatusBadge({ status }) {
 
   return (
     <span
-      className={`rounded-lg px-3 py-1 text-xs font-extrabold ${
+      className={`rounded-md px-2.5 py-1 text-xs font-medium ${
         styles[status] || "bg-gray-100 text-gray-700"
       }`}
     >
@@ -522,12 +498,12 @@ function StatusBadge({ status }) {
 
 function DepartmentWorkload() {
   return (
-    <aside className="rounded-2xl bg-white p-4 shadow-sm sm:p-5 xl:col-span-4">
+    <aside className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5 xl:col-span-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-lg font-extrabold text-gray-900">
+        <h2 className="text-lg font-semibold text-gray-900">
           Department Workload
         </h2>
-        <button className="text-sm font-bold text-green-600">View All</button>
+        <button className="text-sm font-medium text-green-700">View All</button>
       </div>
 
       <div className="mt-6 space-y-6">
@@ -536,14 +512,14 @@ function DepartmentWorkload() {
 
           return (
             <div key={item.name} className="flex items-center gap-4">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gray-50 text-gray-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50 text-gray-600">
                 <Icon size={21} />
               </div>
 
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <p className="font-bold text-gray-800">{item.name}</p>
-                  <p className="font-extrabold text-gray-900">{item.value}%</p>
+                  <p className="font-medium text-gray-800">{item.name}</p>
+                  <p className="font-semibold text-gray-900">{item.value}%</p>
                 </div>
 
                 <div className="mt-2 h-2 overflow-hidden rounded-full bg-gray-100">
