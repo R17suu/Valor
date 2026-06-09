@@ -176,7 +176,7 @@ const workloads = [
 export default function Overview() {
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
         <header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -200,7 +200,7 @@ export default function Overview() {
 
         {/* Map and Right Panels */}
         <section className="grid gap-6 xl:grid-cols-12">
-          <div className="rounded-2xl bg-white p-5 shadow-sm xl:col-span-8">
+          <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5 xl:col-span-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-lg font-extrabold text-gray-900">
                 Incident Map Overview
@@ -212,7 +212,7 @@ export default function Overview() {
               <FilterButton label="All Categories" />
               <FilterButton label="All Statuses" />
 
-              <button className="ml-auto flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-xs font-bold text-green-700">
+              <button className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-xs font-bold text-green-700 sm:ml-auto sm:w-auto">
                 <Eye size={15} />
                 Heatmap View
               </button>
@@ -231,18 +231,18 @@ export default function Overview() {
 
         {/* Reports and Workload */}
         <section className="grid gap-6 xl:grid-cols-12">
-          <div className="rounded-2xl bg-white p-5 shadow-sm xl:col-span-8">
-            <div className="flex items-center justify-between">
+          <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5 xl:col-span-8">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-lg font-extrabold text-gray-900">
                 Recent Reports
               </h2>
-              <button className="text-sm font-bold text-blue-600">
+              <button className="text-sm font-bold text-green-600">
                 View All Reports
               </button>
             </div>
 
             <div className="mt-5 overflow-x-auto">
-              <table className="w-full min-w-212.5 text-left text-sm">
+              <table className="w-full min-w-[820px] text-left text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 text-xs text-gray-400">
                     <th className="px-3 py-3 font-bold">ID</th>
@@ -304,7 +304,7 @@ function StatCard({ stat }) {
 
 function FilterButton({ label }) {
   return (
-    <button className="flex min-w-40 items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-4 py-2 text-xs font-bold text-gray-700">
+    <button className="flex w-full min-w-0 items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-4 py-2 text-xs font-bold text-gray-700 sm:min-w-40">
       {label}
       <ChevronDown size={15} />
     </button>
@@ -313,7 +313,7 @@ function FilterButton({ label }) {
 
 function MapOverview() {
   return (
-    <div className="relative h-90 overflow-hidden rounded-xl bg-[#EAF2EA]">
+    <div className="relative h-[340px] overflow-hidden rounded-xl bg-[#EAF2EA] sm:h-90">
       {/* Fake map background */}
       <div className="absolute inset-0 opacity-80">
         <div className="absolute left-[-10%] top-[15%] h-20 w-[120%] -rotate-12 bg-white/70" />
@@ -327,23 +327,23 @@ function MapOverview() {
 
       <div className="absolute inset-x-[15%] top-[10%] bottom-[10%] rounded-[45%] border-2 border-dashed border-green-300/80 bg-green-100/20" />
 
-      <span className="absolute left-[25%] top-[12%] text-sm font-bold text-gray-800">
+      <span className="absolute left-[25%] top-[12%] text-xs font-bold text-gray-800 sm:text-sm">
         Lumbo
       </span>
-      <span className="absolute left-[46%] top-[35%] text-sm font-bold text-gray-800">
+      <span className="absolute left-[46%] top-[35%] text-xs font-bold text-gray-800 sm:text-sm">
         Poblacion City
       </span>
-      <span className="absolute right-[16%] top-[20%] text-sm font-bold text-gray-800">
+      <span className="absolute right-[16%] top-[20%] text-xs font-bold text-gray-800 sm:text-sm">
         Bagontaas
       </span>
-      <span className="absolute right-[16%] bottom-[12%] text-sm font-bold text-gray-800">
+      <span className="absolute right-[16%] bottom-[12%] text-xs font-bold text-gray-800 sm:text-sm">
         Patag
       </span>
 
       {mapMarkers.map((marker, index) => (
         <button
           key={index}
-          className={`absolute flex h-12 w-12 items-center justify-center rounded-full text-lg font-extrabold text-white shadow-lg ring-8 ring-white/40 ${marker.color}`}
+          className={`absolute flex h-10 w-10 items-center justify-center rounded-full text-base font-extrabold text-white shadow-lg ring-4 ring-white/40 sm:h-12 sm:w-12 sm:text-lg sm:ring-8 ${marker.color}`}
           style={{ top: marker.top, left: marker.left }}
         >
           {marker.count}
@@ -351,10 +351,10 @@ function MapOverview() {
       ))}
 
       <div className="absolute bottom-5 left-5 overflow-hidden rounded-lg bg-white shadow-md">
-        <button className="flex h-10 w-10 items-center justify-center border-b border-gray-100">
+        <button className="flex h-9 w-9 items-center justify-center border-b border-gray-100 sm:h-10 sm:w-10">
           <Plus size={18} />
         </button>
-        <button className="flex h-10 w-10 items-center justify-center">
+        <button className="flex h-9 w-9 items-center justify-center sm:h-10 sm:w-10">
           <Minus size={18} />
         </button>
       </div>
@@ -364,12 +364,12 @@ function MapOverview() {
 
 function ReportsByCategory() {
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm">
-      <div className="flex items-center justify-between">
+    <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-lg font-extrabold text-gray-900">
           Reports by Category
         </h2>
-        <button className="text-sm font-bold text-blue-600">View All</button>
+        <button className="text-sm font-bold text-green-600">View All</button>
       </div>
 
       <div className="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
@@ -381,9 +381,9 @@ function ReportsByCategory() {
           {categories.map((category) => (
             <div
               key={category.name}
-              className="flex items-center justify-between gap-3 text-sm"
+              className="flex items-start justify-between gap-3 text-sm sm:items-center"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex min-w-0 items-center gap-2">
                 <span className={`h-4 w-4 rounded-full ${category.color}`} />
                 <span className="font-bold text-gray-700">{category.name}</span>
               </div>
@@ -398,19 +398,19 @@ function ReportsByCategory() {
 
 function TopProblemAreas() {
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm">
-      <div className="flex items-center justify-between">
+    <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-lg font-extrabold text-gray-900">
           Top Problem Areas
         </h2>
-        <button className="text-sm font-bold text-blue-600">View All</button>
+        <button className="text-sm font-bold text-green-600">View All</button>
       </div>
 
       <div className="mt-5 space-y-3">
         {problemAreas.map((item) => (
           <div
             key={item.area}
-            className="grid grid-cols-[32px_1fr_auto_90px] items-center gap-3"
+            className="grid grid-cols-[28px_1fr_auto] items-center gap-2 sm:grid-cols-[32px_1fr_auto_90px] sm:gap-3"
           >
             <span
               className={`flex h-7 w-7 items-center justify-center rounded-md text-xs font-extrabold text-white ${item.color}`}
@@ -419,7 +419,9 @@ function TopProblemAreas() {
             </span>
             <p className="font-bold text-gray-800">{item.area}</p>
             <p className="text-sm font-semibold text-gray-500">{item.reports}</p>
-            <MiniLine color={item.line} />
+            <div className="hidden sm:block">
+              <MiniLine color={item.line} />
+            </div>
           </div>
         ))}
       </div>
@@ -520,12 +522,12 @@ function StatusBadge({ status }) {
 
 function DepartmentWorkload() {
   return (
-    <aside className="rounded-2xl bg-white p-5 shadow-sm xl:col-span-4">
-      <div className="flex items-center justify-between">
+    <aside className="rounded-2xl bg-white p-4 shadow-sm sm:p-5 xl:col-span-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-lg font-extrabold text-gray-900">
           Department Workload
         </h2>
-        <button className="text-sm font-bold text-blue-600">View All</button>
+        <button className="text-sm font-bold text-green-600">View All</button>
       </div>
 
       <div className="mt-6 space-y-6">

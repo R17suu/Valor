@@ -131,25 +131,25 @@ const legends = [
 export default function AdminMap() {
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
         <header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h1 className="text-2xl font-extrabold text-gray-900">
-              Incident Map
+              Report Map
             </h1>
             <p className="mt-1 text-sm text-gray-500">
               Monitor active reports, hotspots, and issue locations across Valencia City.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <button className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-700 shadow-sm hover:bg-gray-50">
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-bold text-gray-700 shadow-sm hover:bg-gray-50 sm:w-auto">
               <Layers size={17} />
               Map Layers
             </button>
 
-            <button className="flex items-center gap-2 rounded-xl bg-green-700 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-green-800">
+            <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-700 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-green-800 sm:w-auto">
               <Eye size={17} />
               Heatmap View
             </button>
@@ -157,15 +157,15 @@ export default function AdminMap() {
         </header>
 
         {/* Quick Stats */}
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {/* <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <MapStat title="Active Incidents" value="86" color="text-green-700" />
           <MapStat title="Critical Areas" value="12" color="text-red-600" />
           <MapStat title="Barangays Covered" value="31" color="text-yellow-600" />
           <MapStat title="Resolved Today" value="18" color="text-blue-600" />
-        </section>
+        </section> */}
 
         {/* Filters */}
-        <section className="rounded-2xl bg-white p-5 shadow-sm">
+        <section className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
           <div className="grid gap-4 lg:grid-cols-[1fr_auto_auto_auto]">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -203,8 +203,8 @@ export default function AdminMap() {
         {/* Main Map Layout */}
         <section className="grid gap-6 xl:grid-cols-12">
           {/* Map */}
-          <div className="rounded-2xl bg-white p-5 shadow-sm xl:col-span-8">
-            <div className="flex items-center justify-between">
+          <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5 xl:col-span-8">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-lg font-extrabold text-gray-900">
                   Valencia City Map Overview
@@ -214,7 +214,7 @@ export default function AdminMap() {
                 </p>
               </div>
 
-              <button className="flex items-center gap-2 rounded-xl bg-green-50 px-4 py-2 text-sm font-bold text-green-700">
+              <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-50 px-4 py-2 text-sm font-bold text-green-700 sm:w-auto">
                 <Navigation size={16} />
                 Locate
               </button>
@@ -229,8 +229,8 @@ export default function AdminMap() {
           <aside className="space-y-6 xl:col-span-4">
             <MapLegend />
 
-            <div className="rounded-2xl bg-white p-5 shadow-sm">
-              <div className="flex items-center justify-between">
+            <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <h2 className="text-lg font-extrabold text-gray-900">
                   Active Incidents
                 </h2>
@@ -254,7 +254,7 @@ export default function AdminMap() {
 
 function MapView() {
   return (
-    <div className="relative h-[600px] overflow-hidden rounded-2xl bg-[#EAF2EA]">
+    <div className="relative h-[420px] overflow-hidden rounded-2xl bg-[#EAF2EA] sm:h-[600px]">
       {/* Fake map background */}
       <div className="absolute inset-0 opacity-80">
         <div className="absolute left-[-10%] top-[16%] h-20 w-[120%] rotate-[-12deg] bg-white/70" />
@@ -292,7 +292,7 @@ function MapView() {
         <button
           key={incident.id}
           title={incident.title}
-          className={`absolute flex h-14 w-14 items-center justify-center rounded-full text-lg font-extrabold text-white shadow-lg ring-8 ring-white/50 transition hover:scale-110 ${incident.color}`}
+          className={`absolute flex h-10 w-10 items-center justify-center rounded-full text-sm font-extrabold text-white shadow-lg ring-4 ring-white/50 transition hover:scale-110 sm:h-14 sm:w-14 sm:text-lg sm:ring-8 ${incident.color}`}
           style={{
             top: incident.top,
             left: incident.left,
@@ -304,20 +304,20 @@ function MapView() {
 
       {/* Zoom controls */}
       <div className="absolute bottom-5 left-5 overflow-hidden rounded-xl bg-white shadow-md">
-        <button className="flex h-11 w-11 items-center justify-center border-b border-gray-100 hover:bg-gray-50">
+        <button className="flex h-10 w-10 items-center justify-center border-b border-gray-100 hover:bg-gray-50 sm:h-11 sm:w-11">
           <Plus size={18} />
         </button>
-        <button className="flex h-11 w-11 items-center justify-center hover:bg-gray-50">
+        <button className="flex h-10 w-10 items-center justify-center hover:bg-gray-50 sm:h-11 sm:w-11">
           <Minus size={18} />
         </button>
       </div>
 
       {/* Floating controls */}
-      <div className="absolute right-5 top-5 space-y-3">
-        <button className="flex h-11 w-11 items-center justify-center rounded-xl bg-white shadow-md hover:bg-gray-50">
+      <div className="absolute right-4 top-4 space-y-3 sm:right-5 sm:top-5">
+        <button className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-md hover:bg-gray-50 sm:h-11 sm:w-11">
           <Layers size={18} />
         </button>
-        <button className="flex h-11 w-11 items-center justify-center rounded-xl bg-white shadow-md hover:bg-gray-50">
+        <button className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-md hover:bg-gray-50 sm:h-11 sm:w-11">
           <Navigation size={18} />
         </button>
       </div>
@@ -327,7 +327,7 @@ function MapView() {
 
 function MapLabel({ text, className }) {
   return (
-    <span className={`absolute text-sm font-extrabold text-gray-800 ${className}`}>
+    <span className={`absolute text-xs font-extrabold text-gray-800 sm:text-sm ${className}`}>
       {text}
     </span>
   );
@@ -344,7 +344,7 @@ function Dot({ top, left, color }) {
 
 function MapLegend() {
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm">
+    <div className="rounded-2xl bg-white p-4 shadow-sm sm:p-5">
       <h2 className="text-lg font-extrabold text-gray-900">Map Legend</h2>
 
       <div className="mt-5 grid gap-4">
@@ -409,7 +409,7 @@ function MapStat({ title, value, color }) {
 
 function FilterButton({ label }) {
   return (
-    <button className="flex h-12 min-w-44 items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold text-gray-700">
+    <button className="flex h-12 w-full min-w-0 items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold text-gray-700 sm:min-w-44">
       {label}
       <ChevronDown size={16} />
     </button>

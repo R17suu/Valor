@@ -25,7 +25,7 @@ export default function CitizenLayout({ children }) {
                 VAL<span className="text-red-600">O</span>R
               </h1> */}
                <img src={ValorLogo} alt="Valor Logo" className="h-5 w-auto" />
-              <p className="text-[10px] font-medium leading-tight text-gray-500">
+              <p className="text-xs font-medium leading-tight text-gray-500">
                 Valencia Automated <br /> Local Operations & Response
               </p>
             </div>
@@ -78,7 +78,7 @@ export default function CitizenLayout({ children }) {
       <div className="hidden min-h-screen lg:flex">
         {/* Sidebar */}
         <aside className="fixed left-0 top-0 flex h-screen w-68 flex-col bg-white px-6 py-6 shadow-sm">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
             <ApplicationLogo size={56} />
 
             <div>
@@ -86,7 +86,7 @@ export default function CitizenLayout({ children }) {
                 VAL<span className="text-red-600">O</span>R
               </h1> */}
                <img src={ValorLogo} alt="Valor Logo" className="h-6 w-auto" />
-              <p className="text-10px text-gray-500 mt-1"> Valencia Automated <br /> Local Operations & Response</p>
+              <p className="text-xs text-gray-500 mt-1"> Valencia Automated <br /> Local Operations & Response</p>
             </div>
           </div>
 

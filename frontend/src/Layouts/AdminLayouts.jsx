@@ -17,9 +17,11 @@ import {
   Calendar,
   Bell,
   User,
+  Info,
 } from "lucide-react";
 import ApplicationLogo from "../Components/ApplicationLogo";
 import ValorLogo from "@/assets/valor.png";
+import CitySeal from "@/assets/seal.png";
 
 const navigation = [
   {
@@ -28,7 +30,7 @@ const navigation = [
     icon: LayoutDashboard,
   },
   {
-    name: "Residents Complaints",
+    name: "Resident Complaints",
     href: "/admin/reports",
     icon: ClipboardList,
   },
@@ -47,21 +49,12 @@ const navigation = [
     href: "/admin/departments",
     icon: Building2,
   },
-  // {
-  //   name: "Analytics",
-  //   href: "/admin/analytics",
-  //   icon: BarChart3,
-  // },
+
   // {
   //   name: "Users",
   //   href: "/admin/users",
   //   icon: Users,
   // },
-  {
-    name: "Settings",
-    href: "/admin/settings",
-    icon: Settings,
-  },
 ];
 
 const auth = {
@@ -115,11 +108,11 @@ export default function AdminLayout({ children, header }) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 z-50 flex h-screen w-68 flex-col bg-white px-6 py-6 shadow-sm transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed left-0 top-0 z-50 flex h-screen w-[min(17.5rem,calc(100vw-1rem))] flex-col bg-white px-5 py-5 shadow-sm transform transition-transform duration-300 ease-in-out lg:w-68 lg:px-6 lg:py-6 lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex h-full flex-col">
+        <div className="flex h-full flex-col overflow-y-auto">
           {/* Logo */}
           <div className="flex items-center gap-2">
             <ApplicationLogo size={56} />
@@ -158,23 +151,38 @@ export default function AdminLayout({ children, header }) {
           </nav>
 
           {/* Sidebar Footer */}
-          <div className="mt-auto rounded-2xl bg-green-50 p-4">
-            <p className="text-sm font-semibold text-green-900">
-              See an issue in your area?
-            </p>
-            <p className="mt-1 text-xs text-green-700">Report it directly to the LGU.</p>
-            <Link to="/report-issue" className="mt-3 block rounded-xl bg-green-700 py-3 text-center text-sm font-semibold text-white hover:bg-green-800">
-              Submit Report
-            </Link>
+          <div className="mt-auto">
+            <div className="flex items-center gap-3 rounded-[1.4rem] bg-gradient-to-r from-green-900 via-green-800 to-green-700 px-3.5 py-3 text-white shadow-[0_16px_30px_rgba(20,83,45,0.22)]">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15">
+                <img
+                  src={CitySeal}
+                  alt="City of Valencia seal"
+                  className="h-8.5 w-8.5 rounded-full object-cover"
+                />
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] font-semibold leading-tight text-green-100">
+                  City of Valencia
+                </p>
+                <p className="mt-0.5 text-sm font-bold leading-tight text-white">
+                  Administrator
+                </p>
+              </div>
+
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15">
+                <Info className="h-4 w-4 text-green-50" />
+              </div>
+            </div>
           </div>
         </div>
       </aside>
 
       {/* Main content */}
-      <div>
+      <div className="min-w-0 lg:ml-68">
         {/* Top bar */}
         <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white shadow-sm">
-          <div className="flex h-16 items-center gap-4 px-4 sm:px-6">
+          <div className="flex h-16 items-center gap-2.5 px-4 sm:gap-4 sm:px-6">
             {/* Mobile menu button */}
             <button
               type="button"
@@ -204,7 +212,7 @@ export default function AdminLayout({ children, header }) {
             </div>
 
             {/* Right section */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-3">
               {/* Date range picker (moved from Overview) */}
               <div className="hidden sm:block">
                 <button className="flex items-center gap-2 rounded-xl border border-gray-100 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm">
@@ -228,7 +236,7 @@ export default function AdminLayout({ children, header }) {
                 </button>
 
                 {notificationOpen && (
-                  <div className="absolute right-0 mt-2 w-80 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg">
+                  <div className="absolute right-0 mt-2 w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg">
                     <div className="border-b border-zinc-200 px-4 py-3">
                       <h3 className="font-semibold text-zinc-900">
                         Notifications
@@ -275,7 +283,7 @@ export default function AdminLayout({ children, header }) {
                 <button
                   type="button"
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-zinc-100"
+                  className="flex items-center gap-2 rounded-xl px-2 py-2 sm:gap-3 sm:px-3 hover:bg-zinc-100"
                 >
                   {auth.user.avatar ? (
                     <img
@@ -302,7 +310,7 @@ export default function AdminLayout({ children, header }) {
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-52 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg">
+                  <div className="absolute right-0 mt-2 w-[min(13rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg">
                     <div className="border-b border-zinc-200 px-4 py-3">
                       <div className="text-sm font-semibold text-zinc-900">
                         {auth.user.name}
@@ -314,7 +322,7 @@ export default function AdminLayout({ children, header }) {
 
                     <div className="py-2">
                       <Link
-                        to="/profile"
+                        to="/admin/profile"
                         className="flex items-center gap-3 px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100"
                       >
                         <User className="h-4 w-4" />
@@ -347,7 +355,9 @@ export default function AdminLayout({ children, header }) {
         </header>
 
         {/* Page content */}
-        <main className="ml-68 min-h-screen flex-1 px-8 py-6">{children}</main>
+        <main className="min-h-screen px-4 py-4 sm:px-6 sm:py-5 lg:px-8 lg:py-6">
+          {children}
+        </main>
       </div>
     </div>
   );

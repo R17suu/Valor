@@ -1,25 +1,23 @@
 // src/pages/Home.jsx
 import { useEffect, useState } from "react";
 import {
-  Plus,
-  FileText,
-  Info,
   Search,
   Bell,
-  MapPin,
-  CheckCircle,
-  UsersRound,
   Map,
+  MapPin,
+  Navigation,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import CitizenLayout from "../Layouts/CitizenLayouts";
-import heroImage from "../assets/P1.png";
-import cityLinkLogo from "../assets/logo.png";
-import citySeal from "../assets/seal.png";
+import cityOverview from "../assets/P2.jpg";
+import digitalReport from "../assets/P3.jpg";
+import lguResponse from "../assets/P5.jpg";
+import pothole from "../assets/pothole.jpg";
+import outage from "../assets/outage.jpg";
 
 const heroSlides = [
   {
-    image: heroImage,
+    image: cityOverview,
     alt: "Aerial view of Valencia City",
     eyebrow: "Live city overview",
     title: "See what is happening across Valencia.",
@@ -27,21 +25,27 @@ const heroSlides = [
       "Monitor reports, barangays, and response activity from a single dashboard.",
   },
   {
-    image: cityLinkLogo,
-    alt: "VALOR smart community reporting logo",
+    image: digitalReport,
+    alt: "Citizen using a mobile phone to report a community issue",
     eyebrow: "Digital reporting",
     title: "One place to submit and track concerns.",
     description:
       "Citizens can send reports with location details and follow progress in real time.",
   },
   {
-    image: citySeal,
-    alt: "Official seal of Valencia City",
+    image: lguResponse,
+    alt: "Local government response team working on a city concern",
     eyebrow: "Built for the LGU",
     title: "Connected to local government response.",
     description:
       "Designed to support faster coordination between residents and the city.",
   },
+];
+
+const loopedHeroSlides = [
+  heroSlides[heroSlides.length - 1],
+  ...heroSlides,
+  heroSlides[0],
 ];
 
 export default function Home() {
@@ -51,43 +55,6 @@ export default function Home() {
       <div className="lg:hidden">
         <section className="px-5 pt-6">
           <MobileHeroCarousel />
-        </section>
-
-        <section className="grid grid-cols-2 gap-4 px-5 pt-5">
-          <MobileFeatureCard
-            title="REPORT AN ISSUE"
-            desc="Submit a concern in your area"
-            color="bg-green-700 text-white"
-            icon={<Plus size={24} />}
-            iconBox="bg-white text-green-700"
-            to="/report-issue"
-          />
-
-          <MobileFeatureCard
-            title="MY REPORTS"
-            desc="Track the status of your reports"
-            color="bg-orange-50 text-orange-700"
-            icon={<FileText size={24} />}
-            iconBox="bg-orange-400 text-white"
-            to="/reports"
-          />
-
-          <MobileFeatureCard
-            title="COMMUNITY REPORTS"
-            desc="View public reports near you"
-            color="bg-blue-50 text-blue-700"
-            icon={<UsersRound size={24} />}
-            iconBox="bg-blue-500 text-white"
-            to="/community-reports"
-          />
-
-          <MobileFeatureCard
-            title="ABOUT VALOR"
-            desc="Learn more about the platform"
-            color="bg-purple-50 text-purple-700"
-            icon={<Info size={24} />}
-            iconBox="bg-purple-500 text-white"
-          />
         </section>
 
         <section className="px-5 pt-6">
@@ -110,7 +77,7 @@ export default function Home() {
 
           <div className="mt-4 space-y-4">
             <CommunityReportCard
-              image="https://images.unsplash.com/photo-1594230614807-2f2791c1bb7b?q=80&w=300&auto=format&fit=crop"
+              image={pothole}
               title="Pothole reported"
               location="Barangay 5, near the main road"
               status="Pending Review"
@@ -120,7 +87,7 @@ export default function Home() {
             />
 
             <CommunityReportCard
-              image="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=300&auto=format&fit=crop"
+              image={outage}
               title="Streetlight Outage"
               location="Magsaysay Ave, Zone 3"
               status="Technician Dispatched"
@@ -183,43 +150,18 @@ export default function Home() {
         </section>
 
         <section className="mt-6 grid grid-cols-4 gap-6">
-          <StatCard title="Total Reports" value="1,248" color="text-green-700" />
-          <StatCard title="Active Incidents" value="86" color="text-yellow-600" />
+          <StatCard
+            title="Total Reports"
+            value="1,248"
+            color="text-green-700"
+          />
+          <StatCard
+            title="Active Incidents"
+            value="86"
+            color="text-yellow-600"
+          />
           <StatCard title="Resolved" value="972" color="text-green-700" />
           <StatCard title="Critical" value="12" color="text-red-600" />
-        </section>
-
-        <section className="mt-6 grid grid-cols-4 gap-6">
-          <DesktopFeatureCard
-            title="Report an Issue"
-            desc="Submit a concern with photo and location."
-            icon={<Plus size={26} />}
-            color="bg-green-700 text-white"
-            to="/report-issue"
-          />
-
-          <DesktopFeatureCard
-            title="My Reports"
-            desc="Track your submitted community reports."
-            icon={<FileText size={26} />}
-            color="bg-orange-50 text-orange-700"
-            to="/reports"
-          />
-
-          <DesktopFeatureCard
-            title="Community Reports"
-            desc="See anonymous public reports from other citizens."
-            icon={<UsersRound size={26} />}
-            color="bg-blue-50 text-blue-700"
-            to="/community-reports"
-          />
-
-          <DesktopFeatureCard
-            title="Resolved Issues"
-            desc="See proof of completed LGU actions."
-            icon={<CheckCircle size={26} />}
-            color="bg-purple-50 text-purple-700"
-          />
         </section>
 
         <section className="mt-6 grid grid-cols-12 gap-6">
@@ -246,7 +188,7 @@ export default function Home() {
 
             <div className="mt-5 grid gap-4">
               <CommunityReportCard
-                image="https://images.unsplash.com/photo-1594230614807-2f2791c1bb7b?q=80&w=300&auto=format&fit=crop"
+                image={pothole}
                 title="Pothole reported"
                 location="Barangay 5, near the main road"
                 status="Pending Review"
@@ -256,7 +198,7 @@ export default function Home() {
               />
 
               <CommunityReportCard
-                image="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=300&auto=format&fit=crop"
+                image={outage}
                 title="Streetlight Outage"
                 location="Magsaysay Ave, Zone 3"
                 status="Technician Dispatched"
@@ -272,26 +214,96 @@ export default function Home() {
   );
 }
 
-function HeroCarousel() {
-  const [activeSlide, setActiveSlide] = useState(0);
+function useLoopingHeroCarousel() {
+  const [activeSlide, setActiveSlide] = useState(1);
+  const [isTransitionEnabled, setIsTransitionEnabled] = useState(true);
 
   useEffect(() => {
     const slideInterval = window.setInterval(() => {
-      setActiveSlide((currentSlide) => (currentSlide + 1) % heroSlides.length);
+      setIsTransitionEnabled(true);
+      setActiveSlide((currentSlide) => currentSlide + 1);
     }, 4500);
 
     return () => window.clearInterval(slideInterval);
   }, []);
 
+  useEffect(() => {
+    if (isTransitionEnabled) {
+      return undefined;
+    }
+
+    let firstFrame = 0;
+    let secondFrame = 0;
+
+    firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => {
+        setIsTransitionEnabled(true);
+      });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
+    };
+  }, [isTransitionEnabled]);
+
+  const handleTransitionEnd = () => {
+    if (activeSlide === loopedHeroSlides.length - 1) {
+      setIsTransitionEnabled(false);
+      setActiveSlide(1);
+      return;
+    }
+
+    if (activeSlide === 0) {
+      setIsTransitionEnabled(false);
+      setActiveSlide(loopedHeroSlides.length - 2);
+    }
+  };
+
+  const currentSlide =
+    activeSlide === loopedHeroSlides.length - 1
+      ? 0
+      : activeSlide === 0
+        ? heroSlides.length - 1
+        : activeSlide - 1;
+
+  const goToSlide = (index) => {
+    setIsTransitionEnabled(true);
+    setActiveSlide(index + 1);
+  };
+
+  return {
+    activeSlide,
+    currentSlide,
+    goToSlide,
+    handleTransitionEnd,
+    isTransitionEnabled,
+  };
+}
+
+function HeroCarousel() {
+  const {
+    activeSlide,
+    currentSlide,
+    goToSlide,
+    handleTransitionEnd,
+    isTransitionEnabled,
+  } = useLoopingHeroCarousel();
+
   return (
     <div className="relative min-h-[360px] overflow-hidden rounded-[2rem] shadow-[0_24px_60px_rgba(22,101,52,0.18)]">
       <div
-        className="flex h-full min-h-[360px] transition-transform duration-700 ease-out"
+        className={`flex h-full min-h-[360px] ${
+          isTransitionEnabled
+            ? "transition-transform duration-700 ease-out"
+            : "transition-none"
+        }`}
         style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+        onTransitionEnd={handleTransitionEnd}
       >
-        {heroSlides.map((slide) => (
+        {loopedHeroSlides.map((slide, index) => (
           <article
-            key={slide.title}
+            key={`${slide.title}-${index}`}
             className="relative min-w-full overflow-hidden bg-cover bg-center"
             style={{ backgroundImage: `url(${slide.image})` }}
           >
@@ -325,8 +337,8 @@ function HeroCarousel() {
       </div>
 
       <CarouselDots
-        activeSlide={activeSlide}
-        setActiveSlide={setActiveSlide}
+        activeSlide={currentSlide}
+        setActiveSlide={goToSlide}
         desktop
       />
     </div>
@@ -334,25 +346,28 @@ function HeroCarousel() {
 }
 
 function MobileHeroCarousel() {
-  const [activeSlide, setActiveSlide] = useState(0);
-
-  useEffect(() => {
-    const slideInterval = window.setInterval(() => {
-      setActiveSlide((currentSlide) => (currentSlide + 1) % heroSlides.length);
-    }, 4500);
-
-    return () => window.clearInterval(slideInterval);
-  }, []);
+  const {
+    activeSlide,
+    currentSlide,
+    goToSlide,
+    handleTransitionEnd,
+    isTransitionEnabled,
+  } = useLoopingHeroCarousel();
 
   return (
     <div className="relative min-h-[230px] overflow-hidden rounded-3xl shadow-[0_18px_45px_rgba(22,101,52,0.18)]">
       <div
-        className="flex h-full min-h-[230px] transition-transform duration-700 ease-out"
+        className={`flex h-full min-h-[230px] ${
+          isTransitionEnabled
+            ? "transition-transform duration-700 ease-out"
+            : "transition-none"
+        }`}
         style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+        onTransitionEnd={handleTransitionEnd}
       >
-        {heroSlides.map((slide) => (
+        {loopedHeroSlides.map((slide, index) => (
           <article
-            key={slide.title}
+            key={`${slide.title}-${index}`}
             className="relative min-w-full overflow-hidden bg-cover bg-center"
             style={{ backgroundImage: `url(${slide.image})` }}
           >
@@ -383,10 +398,7 @@ function MobileHeroCarousel() {
         ))}
       </div>
 
-      <CarouselDots
-        activeSlide={activeSlide}
-        setActiveSlide={setActiveSlide}
-      />
+      <CarouselDots activeSlide={currentSlide} setActiveSlide={goToSlide} />
     </div>
   );
 }
@@ -404,16 +416,14 @@ function CarouselDots({ activeSlide, setActiveSlide, desktop = false }) {
           type="button"
           aria-label={`Show slide ${index + 1}`}
           onClick={() => setActiveSlide(index)}
-          className={`rounded-full transition ${
-            desktop ? "h-2.5" : "h-2"
-          } ${
+          className={`rounded-full transition ${desktop ? "h-2.5" : "h-2"} ${
             index === activeSlide
               ? desktop
                 ? "w-8 bg-white"
                 : "w-6 bg-white"
               : desktop
-              ? "w-2.5 bg-white/50 hover:bg-white/80"
-              : "w-2 bg-white/50 hover:bg-white/80"
+                ? "w-2.5 bg-white/50 hover:bg-white/80"
+                : "w-2 bg-white/50 hover:bg-white/80"
           }`}
         />
       ))}
@@ -422,6 +432,36 @@ function CarouselDots({ activeSlide, setActiveSlide, desktop = false }) {
 }
 
 function NearbyIncidentsCard({ desktop = false }) {
+  const majorRoads = [
+    "left-[-6%] top-[18%] h-4 w-[118%] rotate-[-9deg]",
+    "left-[4%] top-[42%] h-4 w-[102%] rotate-[7deg]",
+    "left-[-2%] top-[66%] h-4 w-[110%] rotate-[-10deg]",
+    "left-[20%] top-[-8%] h-[126%] w-4 rotate-[12deg]",
+    "left-[62%] top-[-6%] h-[118%] w-4 rotate-[-8deg]",
+  ];
+
+  const minorRoads = [
+    "left-[4%] top-[12%] h-2 w-[104%] rotate-[2deg]",
+    "left-[8%] top-[30%] h-2 w-[94%] rotate-[-5deg]",
+    "left-[12%] top-[54%] h-2 w-[90%] rotate-[4deg]",
+    "left-[12%] top-[78%] h-2 w-[84%] rotate-[-4deg]",
+    "left-[38%] top-[-4%] h-[114%] w-2 rotate-[8deg]",
+    "left-[80%] top-[-2%] h-[104%] w-2 rotate-[-10deg]",
+  ];
+
+  const parks = [
+    "left-[3%] top-[12%] h-14 w-14",
+    "left-[68%] top-[8%] h-12 w-12",
+    "left-[52%] top-[46%] h-10 w-10",
+    "left-[16%] top-[68%] h-12 w-14",
+  ];
+
+  const contextPins = [
+    { top: "24%", left: "22%", color: "text-red-500", size: desktop ? 30 : 24 },
+    { top: "34%", left: "42%", color: "text-amber-400", size: desktop ? 28 : 22 },
+    { top: "26%", left: "78%", color: "text-green-600", size: desktop ? 30 : 24 },
+  ];
+
   return (
     <div>
       <h3
@@ -433,32 +473,81 @@ function NearbyIncidentsCard({ desktop = false }) {
       </h3>
 
       <div
-        className={`relative mt-4 overflow-hidden rounded-2xl bg-[#DDE7E3] shadow-sm ${
-          desktop ? "h-[248px]" : "h-36"
+        className={`relative mt-4 overflow-hidden rounded-[1.75rem] border border-white/80 bg-[#edf2f5] shadow-[0_18px_40px_rgba(148,163,184,0.18)] ${
+          desktop ? "h-[236px]" : "h-40"
         }`}
       >
-        <div className="absolute inset-0 opacity-60">
-          <div className="absolute left-[-10%] top-[45%] h-16 w-[120%] rounded-full border-t border-gray-400/30" />
-          <div className="absolute left-[20%] top-[-20%] h-[160%] w-px bg-gray-400/20" />
-          <div className="absolute left-[73%] top-[-20%] h-[160%] w-px bg-gray-400/20" />
-          <div className="absolute left-[-20%] top-[68%] h-20 w-[140%] -rotate-12 rounded-full border-t border-gray-400/30" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.75),transparent_38%)]" />
+
+        {parks.map((park) => (
+          <div key={park} className={`absolute rounded-md bg-[#d8efcc] ${park}`} />
+        ))}
+
+        {majorRoads.map((street) => (
+          <div
+            key={street}
+            className={`absolute rounded-full bg-white/95 shadow-[0_0_0_1px_rgba(203,213,225,0.32)] ${street}`}
+          />
+        ))}
+
+        {minorRoads.map((street) => (
+          <div
+            key={street}
+            className={`absolute rounded-full bg-white/88 shadow-[0_0_0_1px_rgba(226,232,240,0.4)] ${street}`}
+          />
+        ))}
+
+        {contextPins.map((pin) => (
+          <div
+            key={`${pin.top}-${pin.left}`}
+            className="absolute -translate-x-1/2 -translate-y-full"
+            style={{ top: pin.top, left: pin.left }}
+          >
+            <MapPin
+              size={pin.size}
+              className={`${pin.color} fill-current drop-shadow-[0_8px_14px_rgba(15,23,42,0.16)]`}
+            />
+          </div>
+        ))}
+
+        <div className="absolute left-[52%] top-[66%] -translate-x-1/2 -translate-y-1/2">
+          <div className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-400/18 blur-md" />
+          <Navigation
+            size={desktop ? 36 : 30}
+            fill="currentColor"
+            strokeWidth={1.8}
+            className="relative rotate-[18deg] text-sky-500 drop-shadow-[0_10px_18px_rgba(59,130,246,0.28)]"
+          />
         </div>
 
-        <div className="absolute left-4 top-4 rounded-xl bg-white px-4 py-3 shadow-sm">
-          <p className="text-sm font-extrabold text-gray-700">
+        <div
+          className={`absolute left-4 top-4 rounded-2xl bg-white/95 shadow-[0_12px_24px_rgba(15,23,42,0.08)] ${
+            desktop ? "max-w-[220px] px-4 py-4" : "max-w-[150px] px-4 py-3"
+          }`}
+        >
+          <p
+            className={`font-extrabold text-gray-800 ${
+              desktop ? "text-lg" : "text-sm"
+            }`}
+          >
             3 Active Reports
           </p>
-          <p className="mt-1 text-[11px] font-semibold text-gray-500">
-            Within 2km radius
+          <p
+            className={`mt-1 font-medium text-gray-500 ${
+              desktop ? "text-xs leading-5" : "text-[11px] leading-4"
+            }`}
+          >
+            Within 2km radius of your current location.
           </p>
         </div>
-
-        <span className="absolute left-[34%] top-[52%] h-3 w-3 rounded-full bg-orange-500 ring-4 ring-orange-500/10" />
-        <span className="absolute right-[15%] top-[32%] h-3 w-3 rounded-full bg-green-800 ring-4 ring-green-800/10" />
 
         <Link
           to="/map"
-          className="absolute bottom-5 right-4 flex items-center gap-2 rounded-2xl bg-green-800 px-5 py-3 text-sm font-extrabold text-white shadow-md"
+          className={`absolute flex items-center gap-2 rounded-2xl bg-green-800 font-extrabold text-white shadow-[0_14px_24px_rgba(22,101,52,0.28)] transition hover:bg-green-900 ${
+            desktop
+              ? "bottom-5 right-4 px-5 py-3 text-sm"
+              : "bottom-4 right-4 px-4 py-2.5 text-xs"
+          }`}
         >
           <Map size={16} />
           View Map
@@ -514,66 +603,12 @@ function CommunityReportCard({
   );
 }
 
-function MobileFeatureCard({ title, desc, color, icon, iconBox, to }) {
-  const wrapperClasses = `min-h-[135px] rounded-2xl p-4 text-left shadow-sm transition hover:scale-[1.02] ${color}`;
-
-  const content = (
-    <div className="flex h-full flex-col justify-between">
-      <div>
-        <h3 className="text-sm font-extrabold leading-tight">{title}</h3>
-        <p className="mt-2 text-xs font-medium opacity-80">{desc}</p>
-      </div>
-
-      <div className="flex justify-end">
-        <div
-          className={`flex h-10 w-10 items-center justify-center rounded-full ${iconBox}`}
-        >
-          {icon}
-        </div>
-      </div>
-    </div>
-  );
-
-  if (to) {
-    return (
-      <Link to={to} className={wrapperClasses}>
-        {content}
-      </Link>
-    );
-  }
-
-  return <button className={wrapperClasses}>{content}</button>;
-}
-
 function StatCard({ title, value, color }) {
   return (
     <div className="rounded-3xl bg-white p-6 shadow-sm">
       <p className="text-sm font-medium text-gray-500">{title}</p>
       <h3 className={`mt-3 text-3xl font-extrabold ${color}`}>{value}</h3>
     </div>
-  );
-}
-
-function DesktopFeatureCard({ title, desc, icon, color, to }) {
-  const cardClasses = `rounded-3xl p-6 text-left shadow-sm transition hover:scale-[1.02] ${color}`;
-
-  const cardContent = (
-    <>
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/40">
-        {icon}
-      </div>
-
-      <h3 className="mt-5 text-lg font-bold">{title}</h3>
-      <p className="mt-2 text-sm opacity-80">{desc}</p>
-    </>
-  );
-
-  return to ? (
-    <Link to={to} className={cardClasses}>
-      {cardContent}
-    </Link>
-  ) : (
-    <button className={cardClasses}>{cardContent}</button>
   );
 }
 

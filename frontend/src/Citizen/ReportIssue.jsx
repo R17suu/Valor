@@ -6,6 +6,7 @@ import {
   Camera,
   ImagePlus,
   LocateFixed,
+  Navigation,
   Send,
   Check,
   MapPin,
@@ -32,7 +33,6 @@ const DEPARTMENT_MAP = {
 };
 
 const DISPLAY_DEPARTMENTS = Object.keys(DEPARTMENT_MAP);
-const DB_DEPARTMENTS = Object.values(DEPARTMENT_MAP);
 
 // Convert DB department name to display name
 const getDepartmentDisplay = (dbName) => {
@@ -111,7 +111,6 @@ export default function ReportIssue() {
       const displayDepartment = getDepartmentDisplay(
         aiResponse.data.department,
       );
-
       const formattedAiResult = {
         photoUrl,
         title: aiResponse.data.suggested_title,
@@ -147,7 +146,6 @@ export default function ReportIssue() {
     try {
       const displayDept = formData.department || aiResult.department;
       const dbDept = getDepartmentDb(displayDept);
-
       const result = await createReport({
         title: formData.title || aiResult.title,
         description: formData.description || aiResult.description,
@@ -508,25 +506,7 @@ function AIReviewStep({
           <label className="text-xs font-bold text-gray-600">
             Location (GPS Mock)
           </label>
-          <div className="mt-2 overflow-hidden rounded-xl border border-gray-200">
-            <div className="relative h-36 bg-green-50">
-              <div className="absolute left-[-10%] top-[30%] h-10 w-[120%] rotate-[-8deg] bg-white/70" />
-              <div className="absolute left-[40%] top-[-10%] h-[130%] w-10 rotate-[15deg] bg-white/70" />
-              <div className="absolute right-6 top-5 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-                <div className="h-4 w-4 rounded-full bg-green-700 ring-8 ring-green-200" />
-              </div>
-              <MapPin
-                size={38}
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 fill-green-700 text-green-700"
-              />
-            </div>
-            <div className="flex items-center justify-between bg-white px-4 py-3">
-              <p className="text-xs font-extrabold text-gray-800">
-                {aiResult.location}
-              </p>
-              <LocateFixed size={18} className="text-gray-600" />
-            </div>
-          </div>
+          <MockLocationCard coordinates={aiResult.location} />
         </section>
 
         <button
@@ -672,6 +652,120 @@ function FlowItem({ number, title, desc, active }) {
         <div>
           <p className="font-extrabold">{title}</p>
           <p className="mt-1 text-xs opacity-80">{desc}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+function MockLocationCard({ coordinates }) {
+  const majorRoads = [
+    "left-[-6%] top-[18%] h-4 w-[120%] rotate-[-10deg]",
+    "left-[-4%] top-[36%] h-4 w-[116%] rotate-[7deg]",
+    "left-[8%] top-[54%] h-4 w-[108%] rotate-[-12deg]",
+    "left-[18%] top-[74%] h-4 w-[96%] rotate-[5deg]",
+    "left-[14%] top-[-6%] h-[118%] w-4 rotate-[13deg]",
+    "left-[36%] top-[-8%] h-[124%] w-4 rotate-[-7deg]",
+    "left-[58%] top-[-10%] h-[128%] w-4 rotate-[10deg]",
+    "left-[80%] top-[-4%] h-[114%] w-4 rotate-[-11deg]",
+  ];
+
+  const minorRoads = [
+    "left-[4%] top-[10%] h-2 w-[104%] rotate-[3deg]",
+    "left-[0%] top-[28%] h-2 w-[108%] rotate-[-4deg]",
+    "left-[14%] top-[46%] h-2 w-[96%] rotate-[2deg]",
+    "left-[8%] top-[64%] h-2 w-[102%] rotate-[-5deg]",
+    "left-[26%] top-[82%] h-2 w-[72%] rotate-[3deg]",
+    "left-[24%] top-[-6%] h-[112%] w-2 rotate-[7deg]",
+    "left-[48%] top-[-8%] h-[118%] w-2 rotate-[-9deg]",
+    "left-[68%] top-[-6%] h-[114%] w-2 rotate-[6deg]",
+  ];
+
+  const parks = [
+    "left-[10%] top-[16%] h-10 w-10",
+    "left-[72%] top-[12%] h-8 w-8",
+    "left-[60%] top-[48%] h-8 w-9",
+    "left-[22%] top-[70%] h-10 w-12",
+  ];
+
+  const contextPins = [
+    { top: "16%", left: "18%", color: "text-red-500", size: 28 },
+    { top: "18%", left: "26%", color: "text-amber-400", size: 24 },
+    { top: "30%", left: "48%", color: "text-red-500", size: 30 },
+    { top: "14%", left: "82%", color: "text-green-500", size: 30 },
+    { top: "46%", left: "74%", color: "text-green-500", size: 30 },
+    { top: "70%", left: "66%", color: "text-amber-400", size: 28 },
+    { top: "74%", left: "12%", color: "text-amber-400", size: 26 },
+    { top: "78%", left: "30%", color: "text-red-500", size: 28 },
+  ];
+
+  return (
+    <div className="mt-2 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+      <div className="relative h-56 bg-[#edf2f5]">
+        <div className="absolute left-[6%] top-[8%] h-16 w-14 rounded-md bg-[#d8efcc]" />
+        <div className="absolute right-[14%] top-[18%] h-12 w-12 rounded-md bg-[#d8efcc]" />
+        <div className="absolute left-[54%] top-[46%] h-10 w-10 rounded-md bg-[#d8efcc]" />
+        <div className="absolute left-[18%] bottom-[16%] h-14 w-16 rounded-md bg-[#d8efcc]" />
+
+        {majorRoads.map((street) => (
+          <div
+            key={street}
+            className={`absolute rounded-full bg-white/95 shadow-[0_0_0_1px_rgba(203,213,225,0.35)] ${street}`}
+          />
+        ))}
+
+        {minorRoads.map((street) => (
+          <div
+            key={street}
+            className={`absolute rounded-full bg-white/90 shadow-[0_0_0_1px_rgba(226,232,240,0.45)] ${street}`}
+          />
+        ))}
+
+        {parks.map((park) => (
+          <div key={park} className={`absolute rounded-sm bg-[#d8efcc] ${park}`} />
+        ))}
+
+        {contextPins.map((pin) => (
+          <div
+            key={`${pin.top}-${pin.left}`}
+            className="absolute -translate-x-1/2 -translate-y-full"
+            style={{ top: pin.top, left: pin.left }}
+          >
+            <MapPin
+              size={pin.size}
+              className={`${pin.color} fill-current drop-shadow-[0_8px_14px_rgba(15,23,42,0.16)]`}
+            />
+          </div>
+        ))}
+
+        <div className="absolute left-[54%] top-[64%] -translate-x-1/2 -translate-y-1/2">
+          <div className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-400/20 blur-md" />
+          <Navigation
+            size={38}
+            fill="currentColor"
+            strokeWidth={1.8}
+            className="relative rotate-[16deg] text-sky-500 drop-shadow-[0_10px_16px_rgba(59,130,246,0.28)]"
+          />
+        </div>
+
+        <div className="absolute left-[72%] top-[58%] -translate-x-1/2 -translate-y-full">
+          <MapPin
+            size={34}
+            className="fill-current text-green-500 drop-shadow-[0_10px_18px_rgba(34,197,94,0.22)]"
+          />
+        </div>
+
+        <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between rounded-2xl bg-white/96 px-4 py-3 shadow-sm">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">
+              Coordinates
+            </p>
+            <p className="mt-1 text-sm font-extrabold text-gray-900">
+              {coordinates}
+            </p>
+          </div>
+          <div className="flex h-10 w-10 items-center justify-center rounded-full border border-green-100 bg-green-700 text-white">
+            <LocateFixed size={16} />
+          </div>
         </div>
       </div>
     </div>
