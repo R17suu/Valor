@@ -49,21 +49,12 @@ const navigation = [
     href: "/admin/departments",
     icon: Building2,
   },
-  // {
-  //   name: "Analytics",
-  //   href: "/admin/analytics",
-  //   icon: BarChart3,
-  // },
+
   // {
   //   name: "Users",
   //   href: "/admin/users",
   //   icon: Users,
   // },
-  {
-    name: "Settings",
-    href: "/admin/settings",
-    icon: Settings,
-  },
 ];
 
 const auth = {
@@ -331,7 +322,7 @@ export default function AdminLayout({ children, header }) {
 
                     <div className="py-2">
                       <Link
-                        to="/profile"
+                        to="/admin/profile"
                         className="flex items-center gap-3 px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100"
                       >
                         <User className="h-4 w-4" />

@@ -1,14 +1,8 @@
 // src/pages/Home.jsx
 import { useEffect, useState } from "react";
 import {
-  Plus,
-  FileText,
-  Info,
   Search,
   Bell,
-  MapPin,
-  CheckCircle,
-  UsersRound,
   Map,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -59,33 +53,6 @@ export default function Home() {
           <MobileHeroCarousel />
         </section>
 
-        {/* <section className="grid grid-cols-3 gap-2.5 px-5 pt-5">
-          <MobileFeatureCard
-            title="REPORT ISSUE"
-            // desc="Submit a concern"
-            color="bg-green-700 text-white"
-            icon={<Plus size={20} />}
-            iconBox="bg-white text-green-700"
-            to="/report-issue"
-          />
-
-          <MobileFeatureCard
-            title="MY REPORTS"
-            // desc="Track your reports"
-            color="bg-orange-50 text-orange-700"
-            icon={<FileText size={20} />}
-            iconBox="bg-orange-400 text-white"
-            to="/reports"
-          />
-
-          <MobileFeatureCard
-            title="ABOUT VALOR"
-            // desc="Learn about the app"
-            color="bg-purple-50 text-purple-700"
-            icon={<Info size={20} />}
-            iconBox="bg-purple-500 text-white"
-          />
-        </section> */}
         <section className="px-5 pt-6">
           <NearbyIncidentsCard />
         </section>
@@ -191,39 +158,6 @@ export default function Home() {
           />
           <StatCard title="Resolved" value="972" color="text-green-700" />
           <StatCard title="Critical" value="12" color="text-red-600" />
-        </section>
-
-        <section className="mt-6 grid grid-cols-4 gap-6">
-          <DesktopFeatureCard
-            title="Report an Issue"
-            desc="Submit a concern with photo and location."
-            icon={<Plus size={26} />}
-            color="bg-green-700 text-white"
-            to="/report-issue"
-          />
-
-          <DesktopFeatureCard
-            title="My Reports"
-            desc="Track your submitted community reports."
-            icon={<FileText size={26} />}
-            color="bg-orange-50 text-orange-700"
-            to="/reports"
-          />
-
-          <DesktopFeatureCard
-            title="Community Reports"
-            desc="See anonymous public reports from other citizens."
-            icon={<UsersRound size={26} />}
-            color="bg-blue-50 text-blue-700"
-            to="/community-reports"
-          />
-
-          <DesktopFeatureCard
-            title="Resolved Issues"
-            desc="See proof of completed LGU actions."
-            icon={<CheckCircle size={26} />}
-            color="bg-purple-50 text-purple-700"
-          />
         </section>
 
         <section className="mt-6 grid grid-cols-12 gap-6">
@@ -586,71 +520,12 @@ function CommunityReportCard({
   );
 }
 
-function MobileFeatureCard({ title, desc, color, icon, iconBox, to }) {
-  const wrapperClasses = `aspect-[0.9] min-h-[110px] w-full rounded-2xl p-3 text-left shadow-sm transition hover:scale-[1.02] ${color}`;
-
-  const content = (
-    <div className="flex h-full flex-col justify-between">
-      <div>
-        <h3 className="text-[13px] font-extrabold leading-[1.15]">
-          {title}
-        </h3>
-
-        {/* <p className="mt-2 text-[11px] font-medium leading-snug opacity-80">
-          {desc}
-        </p> */}
-      </div>
-
-      <div className="flex justify-end">
-        <div
-          className={`flex h-9 w-9 items-center justify-center rounded-full ${iconBox}`}
-        >
-          {icon}
-        </div>
-      </div>
-    </div>
-  );
-
-  if (to) {
-    return (
-      <Link to={to} className={wrapperClasses}>
-        {content}
-      </Link>
-    );
-  }
-
-  return <button className={wrapperClasses}>{content}</button>;
-}
-
 function StatCard({ title, value, color }) {
   return (
     <div className="rounded-3xl bg-white p-6 shadow-sm">
       <p className="text-sm font-medium text-gray-500">{title}</p>
       <h3 className={`mt-3 text-3xl font-extrabold ${color}`}>{value}</h3>
     </div>
-  );
-}
-
-function DesktopFeatureCard({ title, desc, icon, color, to }) {
-  const cardClasses = `rounded-3xl p-6 text-left shadow-sm transition hover:scale-[1.02] ${color}`;
-
-  const cardContent = (
-    <>
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/40">
-        {icon}
-      </div>
-
-      <h3 className="mt-5 text-lg font-bold">{title}</h3>
-      <p className="mt-2 text-sm opacity-80">{desc}</p>
-    </>
-  );
-
-  return to ? (
-    <Link to={to} className={cardClasses}>
-      {cardContent}
-    </Link>
-  ) : (
-    <button className={cardClasses}>{cardContent}</button>
   );
 }
 
