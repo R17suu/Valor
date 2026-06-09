@@ -1,6 +1,6 @@
-import logo from "@/assets/seal.png";
+import logo from "@/assets/App-Icon.png";
 
-export default function ApplicationLogo({ className = "h-8 w-auto text-gray-500", size = 48, ...props }) {
+export default function ApplicationLogo({ className = "h-15 w-auto text-gray-500", size = 48, ...props }) {
   return (
     <img
       src={logo}

@@ -3,73 +3,39 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
-  AlertTriangle,
-  Waves,
-  Trash2,
-  Lightbulb,
-  TreePine,
-  Droplet,
-  ShieldAlert,
-  MoreHorizontal,
-  ChevronRight,
   Camera,
+  Upload,
+  ImagePlus,
   LocateFixed,
   Send,
   Check,
   MapPin,
+  Sparkles,
+  FileText,
+  Building2,
+  Zap,
+  AlertTriangle,
+  ChevronRight,
 } from "lucide-react";
 import CitizenLayout from "../Layouts/CitizenLayouts";
 
-const categories = [
-  {
-    name: "Pothole / Road Damage",
-    icon: <AlertTriangle size={30} />,
-    color: "text-yellow-500",
-  },
-  {
-    name: "Drainage / Flooding",
-    icon: <Waves size={30} />,
-    color: "text-blue-500",
-  },
-  {
-    name: "Illegal Dumping / Garbage",
-    icon: <Trash2 size={30} />,
-    color: "text-green-600",
-  },
-  {
-    name: "Broken Streetlight",
-    icon: <Lightbulb size={30} />,
-    color: "text-yellow-400",
-  },
-  {
-    name: "Fallen Tree / Obstruction",
-    icon: <TreePine size={30} />,
-    color: "text-green-700",
-  },
-  {
-    name: "Water Service Issue",
-    icon: <Droplet size={30} />,
-    color: "text-blue-500",
-  },
-  {
-    name: "Public Safety Concern",
-    icon: <ShieldAlert size={30} />,
-    color: "text-red-600",
-  },
-  {
-    name: "Others",
-    icon: <MoreHorizontal size={30} />,
-    color: "text-gray-500",
-  },
-];
+const aiResult = {
+  title: "Large pothole detected along National Highway",
+  description:
+    "The uploaded photo appears to show a large pothole on the road. This may cause safety risks for vehicles, motorcycles, and pedestrians, especially during night time or rainy weather.",
+  category: "Pothole / Road Damage",
+  priority: "High",
+  department: "City Engineering Office",
+  location: "National Highway, Poblacion, Valencia City",
+};
 
 export default function ReportIssue() {
   const [step, setStep] = useState(1);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [hasPhoto, setHasPhoto] = useState(false);
   const navigate = useNavigate();
 
-  const handleNext = () => {
-    if (!selectedCategory) return;
+  const handlePhotoNext = () => {
+    if (!hasPhoto) return;
     setStep(2);
   };
 
@@ -82,17 +48,16 @@ export default function ReportIssue() {
       {/* Mobile View */}
       <div className="lg:hidden">
         {step === 1 && (
-          <ChooseCategory
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-            onNext={handleNext}
+          <UploadPhotoStep
+            hasPhoto={hasPhoto}
+            setHasPhoto={setHasPhoto}
+            onNext={handlePhotoNext}
             onBack={() => navigate("/home")}
           />
         )}
 
         {step === 2 && (
-          <ReportDetails
-            selectedCategory={selectedCategory}
+          <AIReviewStep
             onSubmit={handleSubmit}
             onBack={() => setStep(1)}
           />
@@ -103,55 +68,57 @@ export default function ReportIssue() {
 
       {/* Desktop View */}
       <div className="hidden lg:block">
-        <header className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-extrabold text-gray-900">
-              Report an Issue
-            </h1>
-            <p className="mt-1 text-gray-500">
-              Submit a community concern with category, details, photo, and location.
-            </p>
-          </div>
-
-          <button
-            onClick={() => navigate("/home")}
-            className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50"
-          >
-            Back to Home
-          </button>
-        </header>
-
         <section className="mt-8 grid grid-cols-12 gap-6">
           <aside className="col-span-4 rounded-3xl bg-white p-6 shadow-sm">
             <h2 className="text-xl font-extrabold text-gray-900">
-              Choose Category
+              Report Flow
             </h2>
             <p className="mt-1 text-sm text-gray-500">
-              Select the issue type that best describes your report.
+              Upload a photo and VALOR AI will generate the report details.
             </p>
 
-            <div className="mt-6 grid grid-cols-2 gap-4">
-              {categories.map((category) => (
-                <CategoryCard
-                  key={category.name}
-                  category={category}
-                  selected={selectedCategory === category.name}
-                  onClick={() => setSelectedCategory(category.name)}
-                  desktop
-                />
-              ))}
+            <div className="mt-6 space-y-4">
+              <FlowItem
+                number="1"
+                title="Upload Photo"
+                desc="Take or upload a picture of the issue."
+                active={step === 1}
+              />
+              <FlowItem
+                number="2"
+                title="AI Generated Report"
+                desc="AI fills the title, category, description, priority, and department."
+                active={step === 2}
+              />
+              <FlowItem
+                number="3"
+                title="Submit Report"
+                desc="Review the generated report and send it to the LGU."
+                active={step === 3}
+              />
             </div>
           </aside>
 
           <main className="col-span-8 rounded-3xl bg-white p-6 shadow-sm">
-            {step !== 3 ? (
-              <DesktopDetailsForm
-                selectedCategory={selectedCategory}
-                onSubmit={handleSubmit}
+            {step === 1 && (
+              <UploadPhotoStep
+                hasPhoto={hasPhoto}
+                setHasPhoto={setHasPhoto}
+                onNext={handlePhotoNext}
+                onBack={() => navigate("/home")}
+                desktop
               />
-            ) : (
-              <DesktopSubmitted />
             )}
+
+            {step === 2 && (
+              <AIReviewStep
+                onSubmit={handleSubmit}
+                onBack={() => setStep(1)}
+                desktop
+              />
+            )}
+
+            {step === 3 && <DesktopSubmitted />}
           </main>
         </section>
       </div>
@@ -159,197 +126,200 @@ export default function ReportIssue() {
   );
 }
 
-function ChooseCategory({
-  selectedCategory,
-  setSelectedCategory,
-  onNext,
-  onBack,
-}) {
+function UploadPhotoStep({ hasPhoto, setHasPhoto, onNext, onBack, desktop = false }) {
   return (
     <div>
-      {/* <header className="flex items-center justify-between px-5 pt-5">
-        <button onClick={onBack} className="rounded-lg p-2 hover:bg-gray-100">
-          <ArrowLeft size={22} />
-        </button>
-
-        <div className="text-center">
-          <h1 className="text-lg font-extrabold text-gray-900">
-            Report an Issue
-          </h1>
-          <p className="text-xs text-gray-500">Choose Category</p>
-        </div>
-
-        <div className="w-10" />
-      </header> */}
-
-      <main className="px-5 pt-6">
-        <h2 className="text-lg font-extrabold text-gray-900">
-          What kind of issue would you like to report?
+      <main className={desktop ? "" : "px-5 pt-6"}>
+        <h2 className="text-xl font-extrabold text-gray-900">
+          Take or upload a picture
         </h2>
+        <p className="mt-2 text-sm text-gray-500">
+          VALOR AI will analyze the photo and automatically fill the report details.
+        </p>
 
-        <section className="mt-5 grid grid-cols-2 gap-4">
-          {categories.map((category) => (
-            <CategoryCard
-              key={category.name}
-              category={category}
-              selected={selectedCategory === category.name}
-              onClick={() => setSelectedCategory(category.name)}
-            />
-          ))}
-        </section>
+        <div className="mt-6 rounded-3xl border-2 border-dashed border-green-200 bg-green-50 p-5 text-center">
+          {hasPhoto ? (
+            <div className="overflow-hidden rounded-2xl">
+              <img
+                src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?q=80&w=700&auto=format&fit=crop"
+                alt="Uploaded issue"
+                className="h-64 w-full object-cover"
+              />
+            </div>
+          ) : (
+            <div className="flex min-h-64 flex-col items-center justify-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white text-green-700 shadow-sm">
+                <ImagePlus size={38} />
+              </div>
+              <h3 className="mt-5 text-lg font-extrabold text-gray-900">
+                No photo selected
+              </h3>
+              <p className="mt-2 text-sm text-gray-500">
+                Take a photo or upload from your device.
+              </p>
+            </div>
+          )}
+
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setHasPhoto(true)}
+              className="flex items-center justify-center gap-2 rounded-2xl bg-green-700 py-4 text-sm font-extrabold text-white hover:bg-green-800"
+            >
+              <Camera size={18} />
+              Take Photo
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setHasPhoto(true)}
+              className="flex items-center justify-center gap-2 rounded-2xl bg-white py-4 text-sm font-extrabold text-green-700 shadow-sm hover:bg-green-50"
+            >
+              <Upload size={18} />
+              Upload
+            </button>
+          </div>
+        </div>
 
         <button
           onClick={onNext}
-          disabled={!selectedCategory}
+          disabled={!hasPhoto}
           className={`mt-6 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-sm font-extrabold text-white transition ${
-            selectedCategory
-              ? "bg-green-700 hover:bg-green-800"
-              : "bg-gray-300"
+            hasPhoto ? "bg-green-700 hover:bg-green-800" : "bg-gray-300"
           }`}
         >
-          Next
-          <ChevronRight size={18} />
+          Analyze Photo with AI
+          <Sparkles size={18} />
         </button>
       </main>
     </div>
   );
 }
 
-function CategoryCard({ category, selected, onClick, desktop = false }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`rounded-2xl border p-4 text-center shadow-sm transition hover:scale-[1.02] ${
-        selected
-          ? "border-green-700 bg-green-50 ring-2 ring-green-600"
-          : "border-gray-100 bg-white"
-      } ${desktop ? "min-h-33.75" : "min-h-30"}`}
-    >
-      <div className={`flex justify-center ${category.color}`}>
-        {category.icon}
-      </div>
-
-      <p className="mt-3 text-xs font-extrabold leading-tight text-gray-800">
-        {category.name}
-      </p>
-    </button>
-  );
-}
-
-function ReportDetails({ selectedCategory, onSubmit, onBack }) {
+function AIReviewStep({ onSubmit, desktop = false }) {
   return (
     <div>
-      <header className="flex items-center justify-between px-5 pt-5">
-        <button onClick={onBack} className="rounded-lg p-2 hover:bg-gray-100">
-          <ArrowLeft size={22} />
-        </button>
+      <main className={desktop ? "" : "px-5 pt-5"}>
+        <section className="rounded-3xl bg-green-50 p-5">
+          <div className="flex items-center gap-2 text-green-700">
+            <Sparkles size={18} />
+            <h3 className="text-sm font-extrabold">
+              AI automatically analyzed your photo
+            </h3>
+          </div>
 
-        <div className="text-center">
-          <h1 className="text-lg font-extrabold text-gray-900">
-            Report Details
-          </h1>
-          <p className="text-xs text-gray-500">Add Details, Photo & Location</p>
-        </div>
-
-        <div className="w-10" />
-      </header>
-
-      <main className="px-5 pt-5">
-        <div className="mb-4 rounded-2xl bg-green-50 px-4 py-3">
-          <p className="text-xs font-semibold text-green-700">Selected Category</p>
-          <p className="text-sm font-extrabold text-green-900">
-            {selectedCategory}
+          <p className="mt-2 text-sm text-green-800">
+            The fields below were generated based on the uploaded image. You can review them before submitting.
           </p>
-        </div>
 
-        <ReportForm onSubmit={onSubmit} />
+          <div className="mt-5 space-y-4">
+            <AIField
+              icon={<FileText size={18} />}
+              label="Generated Title"
+              value={aiResult.title}
+            />
+
+            <AIField
+              icon={<AlertTriangle size={18} />}
+              label="Generated Description"
+              value={aiResult.description}
+            />
+
+            <div className="grid grid-cols-2 gap-3">
+              <AIField
+                icon={<FileText size={18} />}
+                label="Category"
+                value={aiResult.category}
+              />
+
+              <AIField
+                icon={<Zap size={18} />}
+                label="Priority"
+                value={aiResult.priority}
+              />
+            </div>
+
+            <AIField
+              icon={<Building2 size={18} />}
+              label="Assigned Department"
+              value={aiResult.department}
+            />
+          </div>
+        </section>
+
+        <section className="mt-5">
+          <label className="text-xs font-bold text-gray-600">Location</label>
+
+          <div className="mt-2 overflow-hidden rounded-xl border border-gray-200">
+            <div className="relative h-36 bg-[#EAF2EA]">
+              <div className="absolute left-[-10%] top-[30%] h-10 w-[120%] rotate-[-8deg] bg-white/70" />
+              <div className="absolute left-[40%] top-[-10%] h-[130%] w-10 rotate-[15deg] bg-white/70" />
+              <div className="absolute right-6 top-5 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
+                <div className="h-4 w-4 rounded-full bg-blue-500 ring-8 ring-blue-200" />
+              </div>
+              <MapPin
+                size={38}
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 fill-red-600 text-red-600"
+              />
+            </div>
+
+            <div className="flex items-center justify-between bg-white px-4 py-3">
+              <p className="text-xs font-extrabold text-gray-800">
+                {aiResult.location}
+              </p>
+              <LocateFixed size={18} className="text-gray-600" />
+            </div>
+          </div>
+        </section>
+
+        <button
+          type="button"
+          onClick={onSubmit}
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-green-700 py-4 text-sm font-extrabold text-white hover:bg-green-800"
+        >
+          <Send size={17} />
+          Submit Report
+        </button>
       </main>
     </div>
   );
 }
 
-function ReportForm({ onSubmit }) {
+function AIField({ icon, label, value }) {
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        onSubmit();
-      }}
-      className="space-y-4"
+    <div className="rounded-2xl bg-white p-4">
+      <div className="flex items-center gap-2 text-green-700">
+        {icon}
+        <p className="text-xs font-bold uppercase tracking-wide">{label}</p>
+      </div>
+      <p className="mt-2 text-sm font-extrabold leading-6 text-gray-900">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function FlowItem({ number, title, desc, active }) {
+  return (
+    <div
+      className={`rounded-2xl p-4 ${
+        active ? "bg-green-600 text-white" : "bg-green-800/70 text-green-50"
+      }`}
     >
-      <div>
-        <label className="text-xs font-bold text-gray-600">Title</label>
-        <input
-          type="text"
-          defaultValue="Large pothole along National Highway"
-          className="mt-2 w-full rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold outline-none focus:border-green-600"
-        />
-      </div>
-
-      <div>
-        <label className="text-xs font-bold text-gray-600">Description</label>
-        <textarea
-          rows="4"
-          defaultValue="There is a large pothole that is causing vehicles to slow down. It’s dangerous, especially at night."
-          className="mt-2 w-full resize-none rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold outline-none focus:border-green-600"
-        />
-      </div>
-
-      <div>
-        <label className="text-xs font-bold text-gray-600">Photo Optional</label>
-
-        <div className="mt-2 grid grid-cols-2 gap-3">
-          <div className="h-32 overflow-hidden rounded-xl bg-gray-100">
-            <img
-              src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?q=80&w=500&auto=format&fit=crop"
-              alt="Road damage"
-              className="h-full w-full object-cover"
-            />
-          </div>
-
-          <button
-            type="button"
-            className="flex h-32 flex-col items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500"
-          >
-            <Camera size={28} />
-            <span className="mt-2 text-xs font-bold">Add Photo</span>
-          </button>
+      <div className="flex items-start gap-3">
+        <div
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-extrabold ${
+            active ? "bg-white text-green-700" : "bg-green-700 text-white"
+          }`}
+        >
+          {number}
+        </div>
+        <div>
+          <p className="font-extrabold">{title}</p>
+          <p className="mt-1 text-xs opacity-80">{desc}</p>
         </div>
       </div>
-
-      <div>
-        <label className="text-xs font-bold text-gray-600">Location</label>
-
-        <div className="mt-2 overflow-hidden rounded-xl border border-gray-200">
-          <div className="relative h-36 bg-[#EAF2EA]">
-            <div className="absolute left-[-10%] top-[30%] h-10 w-[120%] rotate-[-8deg] bg-white/70" />
-            <div className="absolute left-[40%] top-[-10%] h-[130%] w-10 rotate-15 bg-white/70" />
-            <div className="absolute right-6 top-5 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
-              <div className="h-4 w-4 rounded-full bg-blue-500 ring-8 ring-blue-200" />
-            </div>
-            <MapPin
-              size={38}
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 fill-red-600 text-red-600"
-            />
-          </div>
-
-          <div className="flex items-center justify-between bg-white px-4 py-3">
-            <p className="text-xs font-extrabold text-gray-800">
-              National Highway, Poblacion, Valencia City
-            </p>
-            <LocateFixed size={18} className="text-gray-600" />
-          </div>
-        </div>
-      </div>
-
-      <button
-        type="submit"
-        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-green-700 py-4 text-sm font-extrabold text-white hover:bg-green-800"
-      >
-        <Send size={17} />
-        Submit Report
-      </button>
-    </form>
+    </div>
   );
 }
 
@@ -359,11 +329,6 @@ function ReportSubmitted() {
   return (
     <div className="px-5 pt-6">
       <section className="relative overflow-hidden rounded-3xl bg-green-800 px-5 py-8 text-center text-white shadow-sm">
-        <div className="absolute left-8 top-14 h-2 w-2 rounded-full bg-red-400" />
-        <div className="absolute right-10 top-24 h-2 w-2 rounded-full bg-yellow-400" />
-        <div className="absolute left-20 top-8 h-2 w-2 rounded-full bg-green-400" />
-        <div className="absolute right-20 top-12 h-2 w-2 rounded-full bg-blue-400" />
-
         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white text-green-700">
           <Check size={44} strokeWidth={4} />
         </div>
@@ -377,7 +342,7 @@ function ReportSubmitted() {
         <div className="mt-8 rounded-2xl bg-white p-5 text-left text-gray-900">
           <InfoBlock label="Report ID" value="#VAL-2024-00123" large />
           <InfoBlock label="Submitted" value="June 8, 2025 · 9:41 AM" />
-          <InfoBlock label="Location" value="Poblacion, Valencia City" />
+          <InfoBlock label="Location" value={aiResult.location} />
         </div>
 
         <button
@@ -413,30 +378,6 @@ function InfoBlock({ label, value, large = false }) {
   );
 }
 
-function DesktopDetailsForm({ selectedCategory, onSubmit }) {
-  return (
-    <div>
-      <h2 className="text-2xl font-extrabold text-gray-900">Report Details</h2>
-      <p className="mt-1 text-sm text-gray-500">
-        Add the issue title, description, photo, and location.
-      </p>
-
-      <div className="mt-5 rounded-2xl bg-green-50 px-5 py-4">
-        <p className="text-xs font-semibold text-green-700">
-          Selected Category
-        </p>
-        <p className="text-base font-extrabold text-green-900">
-          {selectedCategory || "Please select a category first"}
-        </p>
-      </div>
-
-      <div className="mt-6 max-w-2xl">
-        <ReportForm onSubmit={onSubmit} />
-      </div>
-    </div>
-  );
-}
-
 function DesktopSubmitted() {
   return (
     <div className="flex min-h-150 items-center justify-center">
@@ -453,7 +394,7 @@ function DesktopSubmitted() {
         <div className="mt-8 rounded-2xl bg-white p-5 text-left text-gray-900">
           <InfoBlock label="Report ID" value="#VAL-2024-00123" large />
           <InfoBlock label="Submitted" value="June 8, 2025 · 9:41 AM" />
-          <InfoBlock label="Location" value="Poblacion, Valencia City" />
+          <InfoBlock label="Location" value={aiResult.location} />
         </div>
       </div>
     </div>

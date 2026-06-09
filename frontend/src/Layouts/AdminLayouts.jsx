@@ -9,6 +9,7 @@ import {
   BarChart3,
   Users,
   Settings,
+  MapPin,
   LogOut,
   Menu,
   ChevronDown,
@@ -18,6 +19,7 @@ import {
   User,
 } from "lucide-react";
 import ApplicationLogo from "../Components/ApplicationLogo";
+import ValorLogo from "@/assets/valor.png";
 
 const navigation = [
   {
@@ -26,30 +28,35 @@ const navigation = [
     icon: LayoutDashboard,
   },
   {
-    name: "Reports",
+    name: "Residents Complaints",
     href: "/admin/reports",
     icon: ClipboardList,
   },
   {
-    name: "Map",
+    name: "Heat Map",
     href: "/admin/map",
     icon: Map,
+  },
+  {
+    name: "Barangays",
+    href: "/admin/barangays",
+    icon: MapPin,
   },
   {
     name: "Departments",
     href: "/admin/departments",
     icon: Building2,
   },
-  {
-    name: "Analytics",
-    href: "/admin/analytics",
-    icon: BarChart3,
-  },
-  {
-    name: "Users",
-    href: "/admin/users",
-    icon: Users,
-  },
+  // {
+  //   name: "Analytics",
+  //   href: "/admin/analytics",
+  //   icon: BarChart3,
+  // },
+  // {
+  //   name: "Users",
+  //   href: "/admin/users",
+  //   icon: Users,
+  // },
   {
     name: "Settings",
     href: "/admin/settings",
@@ -108,27 +115,26 @@ export default function AdminLayout({ children, header }) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-linear-to-b from-green-900 via-green-800 to-green-950 transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed left-0 top-0 z-50 flex h-screen w-68 flex-col bg-white px-6 py-6 shadow-sm transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex h-full flex-col">
           {/* Logo */}
-          <div className="flex h-24 items-center gap-3 px-6 py-6">
-           <ApplicationLogo size={46}/>
+          <div className="flex items-center gap-2">
+            <ApplicationLogo size={56} />
 
-            <div className="flex flex-col leading-tight">
-              <span className="text-xl font-extrabold tracking-wide text-white">
-                VALOR
-              </span>
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-green-100">
-                LGU Dashboard
-              </span>
+            <div>
+              {/* <h1 className="text-2xl font-extrabold text-green-800">
+                VAL<span className="text-red-600">O</span>R
+              </h1> */}
+              <img src={ValorLogo} alt="Valor Logo" className="h-6 w-auto" />
+              <p className="text-xs text-gray-500 mt-1">LGU Dashboard</p>
             </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+          <nav className="mt-10 space-y-2">
             {navigation.map((item) => {
               const Icon = item.icon;
               const isActive = pathname.startsWith(item.href);
@@ -138,10 +144,10 @@ export default function AdminLayout({ children, header }) {
                   key={item.name}
                   to={item.href}
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition ${
+                  className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition ${
                     isActive
-                      ? "bg-green-600 text-white shadow-sm"
-                      : "text-green-100 hover:bg-green-800 hover:text-white"
+                      ? "bg-green-700 text-white"
+                      : "text-gray-600 hover:bg-green-50 hover:text-green-700"
                   }`}
                 >
                   <Icon className="h-5 w-5" />
@@ -152,25 +158,20 @@ export default function AdminLayout({ children, header }) {
           </nav>
 
           {/* Sidebar Footer */}
-          <div className="border-t border-green-700/60 px-5 py-5">
-            <div className="flex items-center gap-3 rounded-2xl bg-green-800/70 p-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-400 text-sm font-extrabold text-green-950">
-                V
-              </div>
-
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-white">
-                  City of Valencia
-                </p>
-                <p className="text-xs text-green-100">Administrator</p>
-              </div>
-            </div>
+          <div className="mt-auto rounded-2xl bg-green-50 p-4">
+            <p className="text-sm font-semibold text-green-900">
+              See an issue in your area?
+            </p>
+            <p className="mt-1 text-xs text-green-700">Report it directly to the LGU.</p>
+            <Link to="/report-issue" className="mt-3 block rounded-xl bg-green-700 py-3 text-center text-sm font-semibold text-white hover:bg-green-800">
+              Submit Report
+            </Link>
           </div>
         </div>
       </aside>
 
       {/* Main content */}
-      <div className="lg:pl-64">
+      <div>
         {/* Top bar */}
         <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white shadow-sm">
           <div className="flex h-16 items-center gap-4 px-4 sm:px-6">
@@ -192,21 +193,21 @@ export default function AdminLayout({ children, header }) {
 
             {/* Search bar */}
             <div className="ml-auto hidden w-full max-w-md md:block">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-                <input
-                  type="text"
-                  placeholder="Search reports, incidents, barangays..."
-                  className="h-10 w-full rounded-xl border border-zinc-200 bg-zinc-50 pl-10 pr-4 text-sm focus:border-green-700 focus:outline-none focus:ring-1 focus:ring-green-700"
-                />
-              </div>
+                {/* <div className="relative">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+                  <input
+                    type="text"
+                    placeholder="Search reports, incidents, barangays..."
+                    className="h-10 w-full rounded-xl border border-zinc-200 bg-zinc-50 pl-10 pr-4 text-sm focus:border-green-700 focus:outline-none focus:ring-1 focus:ring-green-700"
+                  />
+                </div> */}
             </div>
 
             {/* Right section */}
             <div className="flex items-center gap-3">
               {/* Date range picker (moved from Overview) */}
               <div className="hidden sm:block">
-                <button className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm">
+                <button className="flex items-center gap-2 rounded-xl border border-gray-100 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm">
                   <Calendar size={17} />
                   June 1 - June 8, 2025
                   <ChevronDown size={16} />
@@ -346,7 +347,7 @@ export default function AdminLayout({ children, header }) {
         </header>
 
         {/* Page content */}
-        <main className="p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="ml-68 min-h-screen flex-1 px-8 py-6">{children}</main>
       </div>
     </div>
   );
