@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   ArrowLeft,
   Home,
@@ -11,7 +12,8 @@ import CitizenLayout from "../Layouts/CitizenLayouts";
 import pothole from "../assets/national-highway.jpg";
 import outage from "../assets/outage.jpg";
 import light from "../assets/light.jpg";
-const reports = [
+
+const mockReports = [
   {
     id: "VAL-2024-00123",
     title: "Large pothole along National Highway",
@@ -44,23 +46,37 @@ const reports = [
 const filters = ["All", "Pending", "In Progress", "Resolved", "Closed"];
 
 export default function MyReports() {
+  const [reports, setReports] = useState([]);
+
+  useEffect(() => {
+    // Load reports from localStorage
+    const storedReports = JSON.parse(
+      localStorage.getItem("valorReports") || "[]",
+    );
+
+    // Combine stored reports with mock reports
+    const allReports = [
+      ...storedReports.map((report) => ({
+        ...report,
+        image: report.photo_url || pothole,
+        location: `${report.latitude?.toFixed(4)}, ${report.longitude?.toFixed(4)}`,
+        updated: new Date(report.created_at).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+        status: "Under Review",
+      })),
+      ...mockReports,
+    ];
+
+    setReports(allReports);
+  }, []);
+
   return (
     <CitizenLayout>
       {/* Mobile View */}
       <div className="lg:hidden">
-        {/* <header className="flex items-center justify-between px-5 pt-5">
-          <button className="rounded-lg p-2 hover:bg-gray-100">
-            <ArrowLeft size={22} />
-          </button>
-
-          <div className="text-center">
-            <h1 className="text-lg font-extrabold text-gray-900">My Reports</h1>
-            <p className="text-xs text-gray-500">Track Your Reports</p>
-          </div>
-
-          <div className="w-10" />
-        </header> */}
-
         <section className="px-5 pt-5">
           <div className="flex gap-2 overflow-x-auto pb-2">
             {filters.map((filter, index) => (
@@ -79,9 +95,17 @@ export default function MyReports() {
         </section>
 
         <main className="space-y-4 px-5 pt-3">
-          {reports.map((report) => (
-            <ReportCard key={report.id} report={report} />
-          ))}
+          {reports.length === 0 ? (
+            <div className="rounded-2xl bg-white p-6 text-center py-12">
+              <p className="text-gray-500">
+                No reports yet. Submit one to get started!
+              </p>
+            </div>
+          ) : (
+            reports.map((report) => (
+              <ReportCard key={report.id} report={report} />
+            ))
+          )}
         </main>
       </div>
 
@@ -119,9 +143,17 @@ export default function MyReports() {
           </div>
 
           <div className="grid gap-4">
-            {reports.map((report) => (
-              <DesktopReportCard key={report.id} report={report} />
-            ))}
+            {reports.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500">
+                  No reports yet. Submit one to get started!
+                </p>
+              </div>
+            ) : (
+              reports.map((report) => (
+                <DesktopReportCard key={report.id} report={report} />
+              ))
+            )}
           </div>
         </section>
       </div>
@@ -190,9 +222,7 @@ function DesktopReportCard({ report }) {
           <span>{report.location}</span>
         </div>
 
-        <p className="mt-2 text-sm text-gray-400">
-          Updated: {report.updated}
-        </p>
+        <p className="mt-2 text-sm text-gray-400">Updated: {report.updated}</p>
       </div>
 
       <div className="text-right">
@@ -228,4 +258,3 @@ function StatusBadge({ status }) {
     </span>
   );
 }
-

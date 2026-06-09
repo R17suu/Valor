@@ -145,25 +145,32 @@ export default function ReportIssue() {
     setIsLoading(true);
     try {
       const displayDept = formData.department || aiResult.department;
-      const dbDept = getDepartmentDb(displayDept);
-      const result = await createReport({
+
+      // Mock report for hackathon/demo
+      const mockReportId = `#VAL-${Date.now()}`;
+      const mockReport = {
+        id: mockReportId,
         title: formData.title || aiResult.title,
         description: formData.description || aiResult.description,
         category: formData.category || aiResult.category,
         priority: (formData.priority || aiResult.priority).toLowerCase(),
-        department: dbDept,
+        department: displayDept,
         photo_url: aiResult.photoUrl,
         latitude: gpsLocation.latitude,
         longitude: gpsLocation.longitude,
-      });
+        status: "submitted",
+        created_at: new Date().toISOString(),
+      };
 
-      if (!result.success) {
-        alert("Failed to create report: " + result.error);
-        setIsLoading(false);
-        return;
-      }
+      // Store report in localStorage for persistence
+      const existingReports = JSON.parse(
+        localStorage.getItem("valorReports") || "[]",
+      );
+      existingReports.push(mockReport);
+      localStorage.setItem("valorReports", JSON.stringify(existingReports));
 
-      setReportId(result.data.id);
+      setReportId(mockReportId);
+      setAiResult((prev) => ({ ...prev, submittedReport: mockReport }));
       setStep(3);
     } catch (error) {
       console.error("Error submitting report:", error);
@@ -203,7 +210,15 @@ export default function ReportIssue() {
           />
         )}
 
-        {step === 3 && <ReportSubmitted reportId={reportId} />}
+        {step === 3 && (
+          <ReportSubmitted
+            reportId={reportId}
+            department={
+              aiResult?.submittedReport?.department || aiResult?.department
+            }
+            title={aiResult?.submittedReport?.title || aiResult?.title}
+          />
+        )}
       </div>
 
       {/* Desktop View */}
@@ -266,7 +281,15 @@ export default function ReportIssue() {
               />
             )}
 
-            {step === 3 && <DesktopSubmitted reportId={reportId} />}
+            {step === 3 && (
+              <DesktopSubmitted
+                reportId={reportId}
+                department={
+                  aiResult?.submittedReport?.department || aiResult?.department
+                }
+                title={aiResult?.submittedReport?.title || aiResult?.title}
+              />
+            )}
           </main>
         </section>
       </div>
@@ -721,7 +744,10 @@ function MockLocationCard({ coordinates }) {
         ))}
 
         {parks.map((park) => (
-          <div key={park} className={`absolute rounded-sm bg-[#d8efcc] ${park}`} />
+          <div
+            key={park}
+            className={`absolute rounded-sm bg-[#d8efcc] ${park}`}
+          />
         ))}
 
         {contextPins.map((pin) => (
@@ -772,7 +798,7 @@ function MockLocationCard({ coordinates }) {
   );
 }
 
-function ReportSubmitted({ reportId }) {
+function ReportSubmitted({ reportId, department, title }) {
   const navigate = useNavigate();
   const now = new Date();
   const formattedDate = now.toLocaleDateString("en-US", {
@@ -788,22 +814,27 @@ function ReportSubmitted({ reportId }) {
 
   return (
     <div className="px-5 pt-6">
-      <div className="rounded-3xl bg-green-700 px-5 py-8 text-center text-white shadow-sm">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white text-green-700">
-          <Check size={44} strokeWidth={4} />
+      <div className="rounded-2xl bg-green-800 px-4 py-6 text-center text-white shadow-sm">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white text-green-800">
+          <Check size={32} strokeWidth={3} />
         </div>
 
-        <h1 className="mt-6 text-3xl font-extrabold">Thank you!</h1>
-        <p className="mt-4 text-sm font-semibold leading-6 text-green-50">
+        <h1 className="mt-4 text-2xl font-extrabold">Thank you!</h1>
+        <p className="mt-2 text-xs font-semibold leading-5 text-green-100">
           Your report has been submitted. <br />
           We'll notify you once there are updates.
         </p>
 
-        <div className="mt-8 rounded-2xl bg-white p-5 text-left text-gray-900">
+        <div className="mt-5 rounded-2xl bg-green-50 p-4 text-left text-gray-900 shadow-sm">
+          {title && <InfoBlock label="Title" value={title} />}
           <InfoBlock
             label="Report ID"
             value={reportId || "#VAL-2024-00001"}
             large
+          />
+          <InfoBlock
+            label="Department"
+            value={department || "Engineering Office"}
           />
           <InfoBlock
             label="Submitted"
@@ -814,14 +845,14 @@ function ReportSubmitted({ reportId }) {
 
         <button
           onClick={() => navigate("/reports")}
-          className="mt-6 w-full rounded-xl bg-white py-3 text-sm font-extrabold text-green-700 hover:bg-green-50"
+          className="mt-5 w-full rounded-xl bg-white py-3 text-xs font-extrabold text-green-800 hover:bg-green-50 transition"
         >
           View My Reports
         </button>
 
         <button
           onClick={() => navigate("/home")}
-          className="mt-3 w-full rounded-xl bg-green-600 py-3 text-sm font-extrabold text-white hover:bg-green-800"
+          className="mt-2 w-full rounded-xl bg-green-700 py-3 text-xs font-extrabold text-white hover:bg-green-900 transition"
         >
           Back to Home
         </button>
@@ -832,10 +863,14 @@ function ReportSubmitted({ reportId }) {
 
 function InfoBlock({ label, value, large = false }) {
   return (
-    <div className="mb-4 last:mb-0">
-      <p className="text-xs font-bold text-gray-500">{label}</p>
+    <div className="mb-3 last:mb-0">
+      <p className="text-[10px] font-bold uppercase tracking-wide text-gray-600">
+        {label}
+      </p>
       <p
-        className={`font-extrabold text-gray-900 ${large ? "text-xl" : "text-sm"}`}
+        className={`mt-1 font-extrabold text-gray-900 ${
+          large ? "text-sm" : "text-xs"
+        }`}
       >
         {value}
       </p>
@@ -843,7 +878,7 @@ function InfoBlock({ label, value, large = false }) {
   );
 }
 
-function DesktopSubmitted({ reportId }) {
+function DesktopSubmitted({ reportId, department, title }) {
   const navigate = useNavigate();
   const now = new Date();
   const formattedDate = now.toLocaleDateString("en-US", {
@@ -859,22 +894,27 @@ function DesktopSubmitted({ reportId }) {
 
   return (
     <div className="flex min-h-150 items-center justify-center">
-      <div className="w-full max-w-md rounded-3xl bg-green-700 p-8 text-center text-white">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white text-green-700">
-          <Check size={44} strokeWidth={4} />
+      <div className="w-full max-w-sm rounded-2xl bg-green-800 p-6 text-center text-white shadow-md">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white text-green-800">
+          <Check size={32} strokeWidth={3} />
         </div>
 
-        <h1 className="mt-6 text-3xl font-extrabold">Thank you!</h1>
-        <p className="mt-4 text-sm font-semibold leading-6 text-green-50">
+        <h1 className="mt-4 text-2xl font-extrabold">Thank you!</h1>
+        <p className="mt-2 text-xs font-semibold leading-5 text-green-100">
           Your report has been submitted. We'll notify you once there are
           updates.
         </p>
 
-        <div className="mt-8 rounded-2xl bg-white p-5 text-left text-gray-900">
+        <div className="mt-5 rounded-2xl bg-green-50 p-4 text-left text-gray-900 shadow-sm">
+          {title && <InfoBlock label="Title" value={title} />}
           <InfoBlock
             label="Report ID"
             value={reportId || "#VAL-2024-00001"}
             large
+          />
+          <InfoBlock
+            label="Department"
+            value={department || "Engineering Office"}
           />
           <InfoBlock
             label="Submitted"
@@ -885,7 +925,7 @@ function DesktopSubmitted({ reportId }) {
 
         <button
           onClick={() => navigate("/home")}
-          className="mt-6 w-full rounded-xl bg-white py-3 text-sm font-extrabold text-green-700 hover:bg-green-50"
+          className="mt-5 w-full rounded-xl bg-white py-3 text-xs font-extrabold text-green-800 hover:bg-green-50"
         >
           Back to Home
         </button>

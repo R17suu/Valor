@@ -1,12 +1,6 @@
 // src/pages/Home.jsx
 import { useEffect, useState } from "react";
-import {
-  Search,
-  Bell,
-  Map,
-  MapPin,
-  Navigation,
-} from "lucide-react";
+import { Search, Bell, Map, MapPin, Navigation } from "lucide-react";
 import { Link } from "react-router-dom";
 import CitizenLayout from "../Layouts/CitizenLayouts";
 import cityOverview from "../assets/P2.jpg";
@@ -17,28 +11,28 @@ import outage from "../assets/outage.jpg";
 
 const heroSlides = [
   {
-    image: cityOverview,
-    alt: "Aerial view of Valencia City",
-    eyebrow: "Live city overview",
-    title: "See what is happening across Valencia.",
-    description:
-      "Monitor reports, barangays, and response activity from a single dashboard.",
-  },
-  {
     image: digitalReport,
     alt: "Citizen using a mobile phone to report a community issue",
-    eyebrow: "Digital reporting",
-    title: "One place to submit and track concerns.",
+    eyebrow: "Make Valencia Better",
+    title: "Your voice matters. Your report counts.",
     description:
-      "Citizens can send reports with location details and follow progress in real time.",
+      "Spot an issue? Take a photo and help us fix it. Together, we're making Valencia a better place.",
+  },
+  {
+    image: cityOverview,
+    alt: "Aerial view of Valencia City",
+    eyebrow: "Track Your Reports",
+    title: "Know what's happening with your issue.",
+    description:
+      "View all your submitted reports in one place and track their status in real time.",
   },
   {
     image: lguResponse,
     alt: "Local government response team working on a city concern",
-    eyebrow: "Built for the LGU",
-    title: "Connected to local government response.",
+    eyebrow: "Faster Response",
+    title: "Connected to local government.",
     description:
-      "Designed to support faster coordination between residents and the city.",
+      "Your reports reach the right department instantly. Help Valencia respond faster.",
   },
 ];
 
@@ -458,8 +452,18 @@ function NearbyIncidentsCard({ desktop = false }) {
 
   const contextPins = [
     { top: "24%", left: "22%", color: "text-red-500", size: desktop ? 30 : 24 },
-    { top: "34%", left: "42%", color: "text-amber-400", size: desktop ? 28 : 22 },
-    { top: "26%", left: "78%", color: "text-green-600", size: desktop ? 30 : 24 },
+    {
+      top: "34%",
+      left: "42%",
+      color: "text-amber-400",
+      size: desktop ? 28 : 22,
+    },
+    {
+      top: "26%",
+      left: "78%",
+      color: "text-green-600",
+      size: desktop ? 30 : 24,
+    },
   ];
 
   return (
@@ -480,7 +484,10 @@ function NearbyIncidentsCard({ desktop = false }) {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.75),transparent_38%)]" />
 
         {parks.map((park) => (
-          <div key={park} className={`absolute rounded-md bg-[#d8efcc] ${park}`} />
+          <div
+            key={park}
+            className={`absolute rounded-md bg-[#d8efcc] ${park}`}
+          />
         ))}
 
         {majorRoads.map((street) => (
