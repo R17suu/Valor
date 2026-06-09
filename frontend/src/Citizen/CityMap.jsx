@@ -1,6 +1,5 @@
 // src/Citizen/CityMap.jsx
 import {
-  ArrowLeft,
   Layers,
   Navigation,
   MapPin,
@@ -11,7 +10,7 @@ import {
   TreePine,
   MoreHorizontal,
 } from "lucide-react";
-import CitizenLayout from "../layouts/CitizenLayouts";
+import CitizenLayout from "../Layouts/CitizenLayouts";
 
 const filters = ["All", "Pothole", "Flooding", "Garbage", "Streetlight"];
 
@@ -67,19 +66,6 @@ export default function CityMap() {
     <CitizenLayout>
       {/* Mobile View */}
       <div className="lg:hidden">
-        {/* <header className="flex items-center justify-between px-5 pt-5">
-          <button className="rounded-lg p-2 hover:bg-gray-100">
-            <ArrowLeft size={22} />
-          </button>
-
-          <div className="text-center">
-            <h1 className="text-lg font-extrabold text-gray-900">City Map</h1>
-            <p className="text-xs text-gray-500">Explore Issues in Your Area</p>
-          </div>
-
-          <div className="w-10" />
-        </header> */}
-
         <section className="px-5 pt-5">
           <div className="flex gap-2 overflow-x-auto pb-2">
             {filters.map((filter, index) => (

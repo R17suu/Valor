@@ -2,6 +2,7 @@
 import { NavLink } from "react-router-dom";
 import { Home, ClipboardList, Map, User, Plus, Menu, Bell } from "lucide-react";
 import ApplicationLogo from "../Components/ApplicationLogo";
+import ValorLogo from "@/assets/valor.png";
 
 export default function CitizenLayout({ children }) {
   return (
@@ -14,15 +15,16 @@ export default function CitizenLayout({ children }) {
             <Menu size={22} />
           </button>
 
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 p-">
-              <ApplicationLogo size={40} />
+          <div className="flex items-center gap-1">
+            <div>
+              <ApplicationLogo />
             </div>
 
             <div>
-              <h1 className="text-xl font-extrabold tracking-wide text-green-800">
+              {/* <h1 className="text-xl font-extrabold tracking-wide text-green-800">
                 VAL<span className="text-red-600">O</span>R
-              </h1>
+              </h1> */}
+               <img src={ValorLogo} alt="Valor Logo" className="h-5 w-auto" />
               <p className="text-[10px] font-medium leading-tight text-gray-500">
                 Valencia Automated <br /> Local Operations & Response
               </p>
@@ -48,7 +50,16 @@ export default function CitizenLayout({ children }) {
             />
 
             <div className="flex justify-center">
-              <NavLink to="/report-issue" className="-mt-8 flex h-14 w-14 items-center justify-center rounded-full bg-green-700 text-white shadow-lg ring-4 ring-white">
+              <NavLink
+                to="/report-issue"
+                className={({ isActive }) =>
+                  `-mt-8 flex h-14 w-14 items-center justify-center rounded-full shadow-lg ring-4 ring-white transition ${
+                    isActive
+                      ? "bg-green-700 text-white"
+                      : "bg-white text-green-700"
+                  }`
+                }
+              >
                 <Plus size={28} />
               </NavLink>
             </div>
@@ -71,10 +82,11 @@ export default function CitizenLayout({ children }) {
             <ApplicationLogo size={56} />
 
             <div>
-              <h1 className="text-2xl font-extrabold text-green-800">
+              {/* <h1 className="text-2xl font-extrabold text-green-800">
                 VAL<span className="text-red-600">O</span>R
-              </h1>
-              <p className="text-xs text-gray-500">Smart Community Reporting</p>
+              </h1> */}
+               <img src={ValorLogo} alt="Valor Logo" className="h-6 w-auto" />
+              <p className="text-xs text-gray-500 mt-1">Smart Community Reporting</p>
             </div>
           </div>
 

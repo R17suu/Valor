@@ -15,7 +15,7 @@ import {
   LogOut,
   Edit3,
 } from "lucide-react";
-import CitizenLayout from "../layouts/CitizenLayouts";
+import CitizenLayout from "../Layouts/CitizenLayouts";
 
 export default function Profile() {
   return (
