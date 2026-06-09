@@ -22,6 +22,33 @@ import { callDraftReport, createReport } from "../services/reportApi";
 import { getMockGPSLocation } from "../services/gps";
 import garbageSampleImg from "../assets/garbage-sample.jpg";
 
+// Department display names to database names mapping
+const DEPARTMENT_MAP = {
+  "Engineering Office": "Engineering Office",
+  "City ENRO": "CENRO (City Environment and Natural Resources Office)",
+  "Disaster Risk Reduction Office": "Disaster Risk Reduction Office",
+  "Water District": "Water District",
+  "Public Safety Office": "Public Safety Office",
+};
+
+const DISPLAY_DEPARTMENTS = Object.keys(DEPARTMENT_MAP);
+const DB_DEPARTMENTS = Object.values(DEPARTMENT_MAP);
+
+// Convert DB department name to display name
+const getDepartmentDisplay = (dbName) => {
+  if (!dbName) return DISPLAY_DEPARTMENTS[0];
+  return (
+    Object.keys(DEPARTMENT_MAP).find(
+      (key) => DEPARTMENT_MAP[key].toLowerCase() === dbName.toLowerCase(),
+    ) || DISPLAY_DEPARTMENTS[0]
+  );
+};
+
+// Convert display name to DB department name
+const getDepartmentDb = (displayName) => {
+  return DEPARTMENT_MAP[displayName] || DEPARTMENT_MAP[DISPLAY_DEPARTMENTS[0]];
+};
+
 export default function ReportIssue() {
   const [step, setStep] = useState(1);
   const [photoFile, setPhotoFile] = useState(null);
@@ -80,13 +107,18 @@ export default function ReportIssue() {
         return;
       }
 
+      // Convert database department name to display name for frontend
+      const displayDepartment = getDepartmentDisplay(
+        aiResponse.data.department,
+      );
+
       const formattedAiResult = {
         photoUrl,
         title: aiResponse.data.suggested_title,
         description: aiResponse.data.description,
         category: aiResponse.data.category,
         priority: aiResponse.data.priority,
-        department: aiResponse.data.department,
+        department: displayDepartment,
         confidence: aiResponse.data.confidence,
         location: `${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}`,
       };
@@ -113,12 +145,15 @@ export default function ReportIssue() {
 
     setIsLoading(true);
     try {
+      const displayDept = formData.department || aiResult.department;
+      const dbDept = getDepartmentDb(displayDept);
+
       const result = await createReport({
         title: formData.title || aiResult.title,
         description: formData.description || aiResult.description,
         category: formData.category || aiResult.category,
         priority: (formData.priority || aiResult.priority).toLowerCase(),
-        department: formData.department || aiResult.department,
+        department: dbDept,
         photo_url: aiResult.photoUrl,
         latitude: gpsLocation.latitude,
         longitude: gpsLocation.longitude,
@@ -458,16 +493,14 @@ function AIReviewStep({
           <EditableField
             icon={<Building2 size={18} />}
             label="Department"
-            value={formData.department || aiResult.department}
+            value={
+              formData.department !== undefined
+                ? formData.department
+                : aiResult.department
+            }
             onChange={(val) => handleChange("department", val)}
             isSelect
-            options={[
-              "Engineering Office",
-              "CENRO",
-              "Disaster Risk Reduction",
-              "Water District",
-              "Public Safety",
-            ]}
+            options={DISPLAY_DEPARTMENTS}
           />
         </form>
 
