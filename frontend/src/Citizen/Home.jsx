@@ -4,12 +4,16 @@ import {
   Search,
   Bell,
   Map,
+  MapPin,
+  Navigation,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import CitizenLayout from "../Layouts/CitizenLayouts";
 import cityOverview from "../assets/P2.jpg";
 import digitalReport from "../assets/P3.jpg";
 import lguResponse from "../assets/P5.jpg";
+import pothole from "../assets/pothole.jpg";
+import outage from "../assets/outage.jpg";
 
 const heroSlides = [
   {
@@ -73,7 +77,7 @@ export default function Home() {
 
           <div className="mt-4 space-y-4">
             <CommunityReportCard
-              image="https://images.unsplash.com/photo-1594230614807-2f2791c1bb7b?q=80&w=300&auto=format&fit=crop"
+              image={pothole}
               title="Pothole reported"
               location="Barangay 5, near the main road"
               status="Pending Review"
@@ -83,7 +87,7 @@ export default function Home() {
             />
 
             <CommunityReportCard
-              image="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=300&auto=format&fit=crop"
+              image={outage}
               title="Streetlight Outage"
               location="Magsaysay Ave, Zone 3"
               status="Technician Dispatched"
@@ -184,7 +188,7 @@ export default function Home() {
 
             <div className="mt-5 grid gap-4">
               <CommunityReportCard
-                image="https://images.unsplash.com/photo-1594230614807-2f2791c1bb7b?q=80&w=300&auto=format&fit=crop"
+                image={pothole}
                 title="Pothole reported"
                 location="Barangay 5, near the main road"
                 status="Pending Review"
@@ -194,7 +198,7 @@ export default function Home() {
               />
 
               <CommunityReportCard
-                image="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=300&auto=format&fit=crop"
+                image={outage}
                 title="Streetlight Outage"
                 location="Magsaysay Ave, Zone 3"
                 status="Technician Dispatched"
@@ -428,6 +432,36 @@ function CarouselDots({ activeSlide, setActiveSlide, desktop = false }) {
 }
 
 function NearbyIncidentsCard({ desktop = false }) {
+  const majorRoads = [
+    "left-[-6%] top-[18%] h-4 w-[118%] rotate-[-9deg]",
+    "left-[4%] top-[42%] h-4 w-[102%] rotate-[7deg]",
+    "left-[-2%] top-[66%] h-4 w-[110%] rotate-[-10deg]",
+    "left-[20%] top-[-8%] h-[126%] w-4 rotate-[12deg]",
+    "left-[62%] top-[-6%] h-[118%] w-4 rotate-[-8deg]",
+  ];
+
+  const minorRoads = [
+    "left-[4%] top-[12%] h-2 w-[104%] rotate-[2deg]",
+    "left-[8%] top-[30%] h-2 w-[94%] rotate-[-5deg]",
+    "left-[12%] top-[54%] h-2 w-[90%] rotate-[4deg]",
+    "left-[12%] top-[78%] h-2 w-[84%] rotate-[-4deg]",
+    "left-[38%] top-[-4%] h-[114%] w-2 rotate-[8deg]",
+    "left-[80%] top-[-2%] h-[104%] w-2 rotate-[-10deg]",
+  ];
+
+  const parks = [
+    "left-[3%] top-[12%] h-14 w-14",
+    "left-[68%] top-[8%] h-12 w-12",
+    "left-[52%] top-[46%] h-10 w-10",
+    "left-[16%] top-[68%] h-12 w-14",
+  ];
+
+  const contextPins = [
+    { top: "24%", left: "22%", color: "text-red-500", size: desktop ? 30 : 24 },
+    { top: "34%", left: "42%", color: "text-amber-400", size: desktop ? 28 : 22 },
+    { top: "26%", left: "78%", color: "text-green-600", size: desktop ? 30 : 24 },
+  ];
+
   return (
     <div>
       <h3
@@ -439,32 +473,81 @@ function NearbyIncidentsCard({ desktop = false }) {
       </h3>
 
       <div
-        className={`relative mt-4 overflow-hidden rounded-2xl bg-[#DDE7E3] shadow-sm ${
-          desktop ? "h-[248px]" : "h-36"
+        className={`relative mt-4 overflow-hidden rounded-[1.75rem] border border-white/80 bg-[#edf2f5] shadow-[0_18px_40px_rgba(148,163,184,0.18)] ${
+          desktop ? "h-[236px]" : "h-40"
         }`}
       >
-        <div className="absolute inset-0 opacity-60">
-          <div className="absolute left-[-10%] top-[45%] h-16 w-[120%] rounded-full border-t border-gray-400/30" />
-          <div className="absolute left-[20%] top-[-20%] h-[160%] w-px bg-gray-400/20" />
-          <div className="absolute left-[73%] top-[-20%] h-[160%] w-px bg-gray-400/20" />
-          <div className="absolute left-[-20%] top-[68%] h-20 w-[140%] -rotate-12 rounded-full border-t border-gray-400/30" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.75),transparent_38%)]" />
+
+        {parks.map((park) => (
+          <div key={park} className={`absolute rounded-md bg-[#d8efcc] ${park}`} />
+        ))}
+
+        {majorRoads.map((street) => (
+          <div
+            key={street}
+            className={`absolute rounded-full bg-white/95 shadow-[0_0_0_1px_rgba(203,213,225,0.32)] ${street}`}
+          />
+        ))}
+
+        {minorRoads.map((street) => (
+          <div
+            key={street}
+            className={`absolute rounded-full bg-white/88 shadow-[0_0_0_1px_rgba(226,232,240,0.4)] ${street}`}
+          />
+        ))}
+
+        {contextPins.map((pin) => (
+          <div
+            key={`${pin.top}-${pin.left}`}
+            className="absolute -translate-x-1/2 -translate-y-full"
+            style={{ top: pin.top, left: pin.left }}
+          >
+            <MapPin
+              size={pin.size}
+              className={`${pin.color} fill-current drop-shadow-[0_8px_14px_rgba(15,23,42,0.16)]`}
+            />
+          </div>
+        ))}
+
+        <div className="absolute left-[52%] top-[66%] -translate-x-1/2 -translate-y-1/2">
+          <div className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-400/18 blur-md" />
+          <Navigation
+            size={desktop ? 36 : 30}
+            fill="currentColor"
+            strokeWidth={1.8}
+            className="relative rotate-[18deg] text-sky-500 drop-shadow-[0_10px_18px_rgba(59,130,246,0.28)]"
+          />
         </div>
 
-        <div className="absolute left-4 top-4 rounded-xl bg-white px-4 py-3 shadow-sm">
-          <p className="text-sm font-extrabold text-gray-700">
+        <div
+          className={`absolute left-4 top-4 rounded-2xl bg-white/95 shadow-[0_12px_24px_rgba(15,23,42,0.08)] ${
+            desktop ? "max-w-[220px] px-4 py-4" : "max-w-[150px] px-4 py-3"
+          }`}
+        >
+          <p
+            className={`font-extrabold text-gray-800 ${
+              desktop ? "text-lg" : "text-sm"
+            }`}
+          >
             3 Active Reports
           </p>
-          <p className="mt-1 text-[11px] font-semibold text-gray-500">
-            Within 2km radius
+          <p
+            className={`mt-1 font-medium text-gray-500 ${
+              desktop ? "text-xs leading-5" : "text-[11px] leading-4"
+            }`}
+          >
+            Within 2km radius of your current location.
           </p>
         </div>
-
-        <span className="absolute left-[34%] top-[52%] h-3 w-3 rounded-full bg-orange-500 ring-4 ring-orange-500/10" />
-        <span className="absolute right-[15%] top-[32%] h-3 w-3 rounded-full bg-green-800 ring-4 ring-green-800/10" />
 
         <Link
           to="/map"
-          className="absolute bottom-5 right-4 flex items-center gap-2 rounded-2xl bg-green-800 px-5 py-3 text-sm font-extrabold text-white shadow-md"
+          className={`absolute flex items-center gap-2 rounded-2xl bg-green-800 font-extrabold text-white shadow-[0_14px_24px_rgba(22,101,52,0.28)] transition hover:bg-green-900 ${
+            desktop
+              ? "bottom-5 right-4 px-5 py-3 text-sm"
+              : "bottom-4 right-4 px-4 py-2.5 text-xs"
+          }`}
         >
           <Map size={16} />
           View Map

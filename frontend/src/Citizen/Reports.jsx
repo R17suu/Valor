@@ -8,7 +8,9 @@ import {
   MapPin,
 } from "lucide-react";
 import CitizenLayout from "../Layouts/CitizenLayouts";
-
+import pothole from "../assets/national-highway.jpg";
+import outage from "../assets/outage.jpg";
+import light from "../assets/light.jpg";
 const reports = [
   {
     id: "VAL-2024-00123",
@@ -17,8 +19,7 @@ const reports = [
     updated: "June 8, 2025 · 10:30 AM",
     status: "In Progress",
     category: "Road Damage",
-    image:
-      "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?q=80&w=400&auto=format&fit=crop",
+    image: pothole,
   },
   {
     id: "VAL-2024-00120",
@@ -27,8 +28,7 @@ const reports = [
     updated: "June 7, 2025 · 2:15 PM",
     status: "Under Review",
     category: "Garbage and Waste",
-    image:
-      "https://images.unsplash.com/photo-1604187351574-c75ca79f5807?q=80&w=400&auto=format&fit=crop",
+    image: outage,
   },
   {
     id: "VAL-2024-00115",
@@ -37,8 +37,7 @@ const reports = [
     updated: "June 6, 2025 · 8:45 AM",
     status: "Resolved",
     category: "Street Lights",
-    image:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=400&auto=format&fit=crop", 
+    image: light,
   },
 ];
 
@@ -102,13 +101,6 @@ export default function MyReports() {
             Submit New Report
           </button>
         </header>
-
-        <section className="mt-8 grid grid-cols-4 gap-6">
-          <SummaryCard title="Total Reports" value="12" color="text-green-700" />
-          <SummaryCard title="Under Review" value="3" color="text-blue-600" />
-          <SummaryCard title="In Progress" value="4" color="text-yellow-600" />
-          <SummaryCard title="Resolved" value="5" color="text-green-700" />
-        </section>
 
         <section className="mt-8 rounded-3xl bg-white p-6 shadow-sm">
           <div className="mb-5 flex flex-wrap gap-2">
@@ -237,11 +229,3 @@ function StatusBadge({ status }) {
   );
 }
 
-function SummaryCard({ title, value, color }) {
-  return (
-    <div className="rounded-3xl bg-white p-6 shadow-sm">
-      <p className="text-sm font-medium text-gray-500">{title}</p>
-      <h2 className={`mt-3 text-4xl font-extrabold ${color}`}>{value}</h2>
-    </div>
-  );
-}

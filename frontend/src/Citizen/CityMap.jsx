@@ -15,49 +15,67 @@ import CitizenLayout from "../Layouts/CitizenLayouts";
 const filters = ["All", "Pothole", "Flooding", "Garbage", "Streetlight"];
 
 const incidents = [
-  { id: 1, count: 12, top: "20%", left: "18%", color: "bg-red-600", title: "Road Damage" },
-  { id: 2, count: 5, top: "32%", left: "34%", color: "bg-blue-600", title: "Flooding" },
-  { id: 3, count: 3, top: "17%", left: "62%", color: "bg-purple-500", title: "Fallen Tree" },
-  { id: 4, count: 6, top: "26%", left: "80%", color: "bg-green-600", title: "Garbage" },
-  { id: 5, count: 8, top: "47%", left: "24%", color: "bg-blue-600", title: "Drainage" },
-  { id: 6, count: 8, top: "41%", left: "43%", color: "bg-orange-500", title: "Streetlight" },
-  { id: 7, count: 6, top: "47%", left: "72%", color: "bg-green-600", title: "Illegal Dumping" },
-  { id: 8, count: 3, top: "61%", left: "61%", color: "bg-red-600", title: "Pothole" },
-  { id: 9, count: 4, top: "71%", left: "77%", color: "bg-yellow-500", title: "Broken Streetlight" },
-  { id: 10, count: 5, top: "76%", left: "23%", color: "bg-blue-600", title: "Flooding" },
-  { id: 11, count: 8, top: "39%", left: "8%", color: "bg-green-600", title: "Garbage" },
+  { id: 1, count: 12, top: "20%", left: "18%", color: "text-red-600", title: "Road Damage" },
+  { id: 2, count: 5, top: "32%", left: "34%", color: "text-blue-600", title: "Flooding" },
+  { id: 3, count: 3, top: "17%", left: "62%", color: "text-purple-500", title: "Fallen Tree" },
+  { id: 4, count: 6, top: "26%", left: "80%", color: "text-green-600", title: "Garbage" },
+  { id: 5, count: 8, top: "47%", left: "24%", color: "text-blue-600", title: "Drainage" },
+  { id: 6, count: 8, top: "41%", left: "43%", color: "text-orange-500", title: "Streetlight" },
+  { id: 7, count: 6, top: "47%", left: "72%", color: "text-green-600", title: "Illegal Dumping" },
+  { id: 8, count: 3, top: "61%", left: "61%", color: "text-red-600", title: "Pothole" },
+  { id: 9, count: 4, top: "71%", left: "77%", color: "text-yellow-500", title: "Broken Streetlight" },
+  { id: 10, count: 5, top: "76%", left: "23%", color: "text-blue-600", title: "Flooding" },
+  { id: 11, count: 8, top: "39%", left: "8%", color: "text-green-600", title: "Garbage" },
 ];
 
 const legends = [
   {
     label: "Pothole / Road Damage",
-    icon: <AlertTriangle size={13} />,
-    color: "bg-red-600",
+    description: "Street surface hazards",
+    icon: <AlertTriangle size={14} />,
+    iconClass: "bg-red-600 text-white",
+    panelClass: "border-red-100 bg-red-50/70",
+    titleClass: "text-red-900",
   },
   {
     label: "Drainage / Flooding",
-    icon: <Droplets size={13} />,
-    color: "bg-blue-600",
+    description: "Water and drainage issues",
+    icon: <Droplets size={14} />,
+    iconClass: "bg-blue-600 text-white",
+    panelClass: "border-blue-100 bg-blue-50/70",
+    titleClass: "text-blue-900",
   },
   {
     label: "Illegal Dumping / Garbage",
-    icon: <Trash2 size={13} />,
-    color: "bg-green-600",
+    description: "Waste and cleanup concerns",
+    icon: <Trash2 size={14} />,
+    iconClass: "bg-green-600 text-white",
+    panelClass: "border-green-100 bg-green-50/70",
+    titleClass: "text-green-900",
   },
   {
     label: "Broken Streetlight",
-    icon: <Lightbulb size={13} />,
-    color: "bg-yellow-500",
+    description: "Lighting and visibility",
+    icon: <Lightbulb size={14} />,
+    iconClass: "bg-yellow-500 text-white",
+    panelClass: "border-yellow-100 bg-yellow-50/70",
+    titleClass: "text-yellow-900",
   },
   {
     label: "Fallen Tree / Obstruction",
-    icon: <TreePine size={13} />,
-    color: "bg-purple-500",
+    description: "Blocked or unsafe paths",
+    icon: <TreePine size={14} />,
+    iconClass: "bg-purple-500 text-white",
+    panelClass: "border-purple-100 bg-purple-50/70",
+    titleClass: "text-purple-900",
   },
   {
     label: "Others",
-    icon: <MoreHorizontal size={13} />,
-    color: "bg-gray-500",
+    description: "Other community reports",
+    icon: <MoreHorizontal size={14} />,
+    iconClass: "bg-gray-500 text-white",
+    panelClass: "border-gray-200 bg-gray-50/80",
+    titleClass: "text-gray-900",
   },
 ];
 
@@ -86,14 +104,17 @@ export default function CityMap() {
         <main className="px-5 pt-3">
           <MapCard />
 
-          <section className="-mt-4 rounded-3xl bg-white p-5 shadow-lg">
+          <section className="mt-4 rounded-3xl border border-gray-100 bg-white p-5 shadow-lg">
             <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-gray-200" />
 
             <h2 className="text-sm font-extrabold text-gray-900">
               Map Legend
             </h2>
+            <p className="mt-1 text-xs text-gray-500">
+              Understand what each map pin represents.
+            </p>
 
-            <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-4">
+            <div className="mt-4 grid grid-cols-2 gap-3">
               {legends.map((legend) => (
                 <LegendItem key={legend.label} legend={legend} />
               ))}
@@ -116,13 +137,6 @@ export default function CityMap() {
             Report New Issue
           </button>
         </header>
-
-        <section className="mt-8 grid grid-cols-4 gap-6">
-          <MapStat title="Active Incidents" value="86" color="text-green-700" />
-          <MapStat title="High Priority" value="12" color="text-red-600" />
-          <MapStat title="Barangays" value="31" color="text-yellow-600" />
-          <MapStat title="Resolved Today" value="18" color="text-green-700" />
-        </section>
 
         <section className="mt-8 grid grid-cols-12 gap-6">
           <div className="col-span-8 rounded-3xl bg-white p-5 shadow-sm">
@@ -151,8 +165,11 @@ export default function CityMap() {
               <h2 className="text-lg font-extrabold text-gray-900">
                 Map Legend
               </h2>
+              <p className="mt-1 text-sm text-gray-500">
+                Issue categories currently visible on the city map.
+              </p>
 
-              <div className="mt-5 space-y-4">
+              <div className="mt-5 space-y-3">
                 {legends.map((legend) => (
                   <LegendItem key={legend.label} legend={legend} desktop />
                 ))}
@@ -178,24 +195,64 @@ export default function CityMap() {
 }
 
 function MapCard({ desktop = false }) {
+  const majorRoads = [
+    "left-[-6%] top-[12%] h-4 w-[120%] rotate-[-11deg]",
+    "left-[-4%] top-[28%] h-4 w-[116%] rotate-[7deg]",
+    "left-[6%] top-[44%] h-4 w-[108%] rotate-[-8deg]",
+    "left-[14%] top-[61%] h-4 w-[102%] rotate-[10deg]",
+    "left-[20%] top-[79%] h-4 w-[92%] rotate-[-6deg]",
+    "left-[12%] top-[-4%] h-[114%] w-4 rotate-[12deg]",
+    "left-[30%] top-[-6%] h-[118%] w-4 rotate-[-9deg]",
+    "left-[48%] top-[-8%] h-[122%] w-4 rotate-[8deg]",
+    "left-[66%] top-[-4%] h-[114%] w-4 rotate-[-10deg]",
+    "left-[82%] top-[2%] h-[106%] w-4 rotate-[12deg]",
+  ];
+
+  const minorRoads = [
+    "left-[2%] top-[6%] h-2 w-[108%] rotate-[2deg]",
+    "left-[0%] top-[20%] h-2 w-[112%] rotate-[-5deg]",
+    "left-[8%] top-[36%] h-2 w-[104%] rotate-[3deg]",
+    "left-[6%] top-[52%] h-2 w-[106%] rotate-[-4deg]",
+    "left-[12%] top-[68%] h-2 w-[100%] rotate-[4deg]",
+    "left-[18%] top-[86%] h-2 w-[88%] rotate-[-3deg]",
+    "left-[22%] top-[-4%] h-[108%] w-2 rotate-[8deg]",
+    "left-[40%] top-[-6%] h-[112%] w-2 rotate-[-7deg]",
+    "left-[58%] top-[-6%] h-[114%] w-2 rotate-[6deg]",
+    "left-[74%] top-[-2%] h-[108%] w-2 rotate-[-8deg]",
+    "left-[90%] top-[4%] h-[98%] w-2 rotate-[7deg]",
+  ];
+
+  const parks = [
+    "left-[6%] top-[10%] h-16 w-16",
+    "left-[74%] top-[10%] h-14 w-14",
+    "left-[53%] top-[41%] h-12 w-12",
+    "left-[16%] top-[64%] h-[4.5rem] w-20",
+    "left-[76%] top-[70%] h-16 w-16",
+  ];
+
   return (
     <div
-      className={`relative overflow-hidden bg-[#EAF2EA] ${
+      className={`relative overflow-hidden bg-[#edf2f5] ${
         desktop ? "h-full rounded-3xl" : "h-[360px] rounded-3xl shadow-sm"
       }`}
     >
-      {/* Fake map background */}
-      <div className="absolute inset-0 opacity-80">
-        <div className="absolute left-[-10%] top-[15%] h-20 w-[120%] rotate-[-12deg] bg-white/60" />
-        <div className="absolute left-[-20%] top-[48%] h-16 w-[140%] rotate-[18deg] bg-white/70" />
-        <div className="absolute left-[30%] top-[-10%] h-[120%] w-14 rotate-[10deg] bg-white/60" />
-        <div className="absolute left-[70%] top-[-10%] h-[120%] w-12 rotate-[-20deg] bg-white/60" />
+      {parks.map((park) => (
+        <div key={park} className={`absolute rounded-md bg-[#d8efcc] ${park}`} />
+      ))}
 
-        <div className="absolute left-[10%] top-[10%] h-32 w-32 rounded-full bg-green-100/70" />
-        <div className="absolute right-[5%] top-[20%] h-40 w-40 rounded-full bg-green-100/70" />
-        <div className="absolute bottom-[15%] left-[20%] h-44 w-44 rounded-full bg-blue-100/50" />
-        <div className="absolute bottom-[5%] right-[15%] h-32 w-32 rounded-full bg-green-100/70" />
-      </div>
+      {majorRoads.map((street) => (
+        <div
+          key={street}
+          className={`absolute rounded-full bg-white/95 shadow-[0_0_0_1px_rgba(203,213,225,0.35)] ${street}`}
+        />
+      ))}
+
+      {minorRoads.map((street) => (
+        <div
+          key={street}
+          className={`absolute rounded-full bg-white/90 shadow-[0_0_0_1px_rgba(226,232,240,0.45)] ${street}`}
+        />
+      ))}
 
       {/* Place labels */}
       <span className="absolute left-[38%] top-[12%] text-xs font-bold text-gray-700">
@@ -212,16 +269,30 @@ function MapCard({ desktop = false }) {
       {incidents.map((incident) => (
         <button
           key={incident.id}
-          title={incident.title}
-          className={`absolute flex h-9 w-9 items-center justify-center rounded-full text-xs font-extrabold text-white shadow-md ring-4 ring-white/80 ${incident.color}`}
+          title={`${incident.title} (${incident.count})`}
+          aria-label={`${incident.title} (${incident.count})`}
+          className="absolute -translate-x-1/2 -translate-y-full"
           style={{
             top: incident.top,
             left: incident.left,
           }}
         >
-          {incident.count}
+          <MapPin
+            size={desktop ? 30 : 26}
+            className={`${incident.color} fill-current drop-shadow-[0_10px_18px_rgba(15,23,42,0.18)]`}
+          />
         </button>
       ))}
+
+      <div className="absolute left-[52%] top-[62%] -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-400/20 blur-md" />
+        <Navigation
+          size={desktop ? 42 : 36}
+          fill="currentColor"
+          strokeWidth={1.8}
+          className="relative rotate-[18deg] text-sky-500 drop-shadow-[0_12px_20px_rgba(59,130,246,0.28)]"
+        />
+      </div>
 
       {/* Floating map controls */}
       <div className="absolute right-4 top-[58%] space-y-3">
@@ -239,31 +310,35 @@ function MapCard({ desktop = false }) {
 
 function LegendItem({ legend, desktop = false }) {
   return (
-    <div className="flex items-center gap-2">
-      <span
-        className={`flex items-center justify-center rounded-full text-white ${
-          desktop ? "h-8 w-8" : "h-5 w-5"
-        } ${legend.color}`}
+    <div
+      className={`rounded-2xl border p-3 ${
+        legend.panelClass
+      } ${desktop ? "flex items-center gap-3" : "min-h-[92px]"}`}
+    >
+      <div
+        className={`flex items-center justify-center rounded-2xl shadow-sm ${
+          legend.iconClass
+        } ${desktop ? "h-11 w-11" : "h-9 w-9"}`}
       >
         {legend.icon}
-      </span>
+      </div>
 
-      <span
-        className={`font-semibold text-gray-700 ${
-          desktop ? "text-sm" : "text-[11px]"
-        }`}
-      >
-        {legend.label}
-      </span>
-    </div>
-  );
-}
-
-function MapStat({ title, value, color }) {
-  return (
-    <div className="rounded-3xl bg-white p-6 shadow-sm">
-      <p className="text-sm font-medium text-gray-500">{title}</p>
-      <h2 className={`mt-3 text-4xl font-extrabold ${color}`}>{value}</h2>
+      <div className={desktop ? "min-w-0" : "mt-3"}>
+        <p
+          className={`font-extrabold leading-tight ${
+            desktop ? "text-sm" : "text-[11px]"
+          } ${legend.titleClass}`}
+        >
+          {legend.label}
+        </p>
+        <p
+          className={`mt-1 text-gray-500 ${
+            desktop ? "text-xs" : "text-[10px]"
+          }`}
+        >
+          {legend.description}
+        </p>
+      </div>
     </div>
   );
 }
