@@ -135,7 +135,9 @@ export default function Reports() {
       ...report,
       image: report.photo_url || report.image,
       barangay: report.barangay || "Unknown",
-      location: report.location || "Not specified",
+      location:
+        report.location ||
+        "Valencia City, Poblacion (10.3157°N, 123.7854°E) - Demo",
       date: report.created_at
         ? new Date(report.created_at).toLocaleDateString()
         : "Today",
