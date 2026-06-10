@@ -18,6 +18,7 @@ import {
   Loader,
 } from "lucide-react";
 import CitizenLayout from "../Layouts/CitizenLayouts";
+import DuplicateDetectionAlert from "./DuplicateDetectionAlert";
 import { uploadToCloudinary } from "../services/cloudinaryApi";
 import { callDraftReport, createReport } from "../services/reportApi";
 import { getMockGPSLocation } from "../services/gps";
@@ -58,6 +59,8 @@ export default function ReportIssue() {
   const [reportId, setReportId] = useState(null);
   const [gpsLocation, setGpsLocation] = useState(null);
   const [formData, setFormData] = useState({});
+  const [duplicateData, setDuplicateData] = useState(null);
+  const [showDuplicateAlert, setShowDuplicateAlert] = useState(false);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
@@ -139,7 +142,44 @@ export default function ReportIssue() {
     }
   };
 
-  const handleSubmit = async () => {
+  // Simulate duplicate detection (mock)
+  const checkForDuplicates = async () => {
+    // Simulate a 30% chance of finding a duplicate
+    const shouldFindDuplicate = Math.random() < 0.3;
+
+    if (shouldFindDuplicate) {
+      const mockDuplicate = {
+        duplicate_found: true,
+        incident_id: `inc-${Math.random().toString(36).substr(2, 9)}`,
+        distance_meters: Math.floor(Math.random() * 90) + 10, // 10-100 meters
+        existing_incident_count: Math.floor(Math.random() * 3) + 1, // 1-3 reports
+      };
+      setDuplicateData(mockDuplicate);
+      setShowDuplicateAlert(true);
+      return mockDuplicate;
+    }
+    return null;
+  };
+
+  const handleProceedWithDuplicate = async (incidentId) => {
+    // User chose to add to existing incident
+    setShowDuplicateAlert(false);
+    await submitReport(true, incidentId);
+  };
+
+  const handleSubmitAsNew = async () => {
+    // User chose to submit as new report anyway
+    setShowDuplicateAlert(false);
+    await submitReport(false);
+  };
+
+  const handleGoBackFromDuplicate = () => {
+    setShowDuplicateAlert(false);
+    setDuplicateData(null);
+    setStep(2); // Go back to AI review step
+  };
+
+  const submitReport = async (isDuplicate = false, incidentId = null) => {
     if (!aiResult || !gpsLocation) return;
 
     setIsLoading(true);
@@ -158,8 +198,9 @@ export default function ReportIssue() {
         photo_url: aiResult.photoUrl,
         latitude: gpsLocation.latitude,
         longitude: gpsLocation.longitude,
-        status: "submitted",
+        status: isDuplicate ? "linked_to_incident" : "submitted",
         created_at: new Date().toISOString(),
+        incident_id: incidentId || undefined,
       };
 
       // Store report in localStorage for persistence
@@ -170,7 +211,11 @@ export default function ReportIssue() {
       localStorage.setItem("valorReports", JSON.stringify(existingReports));
 
       setReportId(mockReportId);
-      setAiResult((prev) => ({ ...prev, submittedReport: mockReport }));
+      setAiResult((prev) => ({
+        ...prev,
+        submittedReport: mockReport,
+        linkedToIncident: isDuplicate,
+      }));
       setStep(3);
     } catch (error) {
       console.error("Error submitting report:", error);
@@ -180,9 +225,37 @@ export default function ReportIssue() {
     }
   };
 
+  const handleSubmit = async () => {
+    if (!aiResult || !gpsLocation) return;
+
+    setIsLoading(true);
+    try {
+      // First, check for duplicates
+      const duplicate = await checkForDuplicates();
+      setIsLoading(false);
+      // The duplicate alert will handle the next steps
+    } catch (error) {
+      console.error("Error checking duplicates:", error);
+      setIsLoading(false);
+      // If duplicate check fails, proceed with normal submission
+      await submitReport(false);
+    }
+  };
+
   return (
     <CitizenLayout>
       {isLoading && <LoadingScreen />}
+
+      {/* Duplicate Detection Alert Modal */}
+      {showDuplicateAlert && (
+        <DuplicateDetectionAlert
+          duplicateData={duplicateData}
+          onProceedWithDuplicate={handleProceedWithDuplicate}
+          onSubmitAsNew={handleSubmitAsNew}
+          onGoBack={handleGoBackFromDuplicate}
+          isLoading={isLoading}
+        />
+      )}
 
       {/* Mobile View */}
       <div className="lg:hidden">

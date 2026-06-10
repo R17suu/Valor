@@ -1,5 +1,11 @@
 import { MapPin, Clock3, ArrowUpRight } from "lucide-react";
 import CitizenLayout from "../Layouts/CitizenLayouts";
+import potholeImg from "../assets/pothole.jpg";
+import p2Img from "../assets/P2.jpg";
+import outageImg from "../assets/outage.jpg";
+import garbageImg from "../assets/garbage-acc.jpg";
+import highwayImg from "../assets/national-highway.jpg";
+import p1Img from "../assets/P1.png";
 
 const filters = ["All", "New", "Pending", "In Progress", "Resolved"];
 
@@ -14,8 +20,7 @@ const communityUpdates = [
     dotColor: "bg-orange-500",
     category: "Road Damage",
     reportedAt: "Today, 9:20 AM",
-    image:
-      "https://images.unsplash.com/photo-1594230614807-2f2791c1bb7b?q=80&w=400&auto=format&fit=crop",
+    image: potholeImg,
   },
   {
     id: "COMM-002",
@@ -27,8 +32,7 @@ const communityUpdates = [
     dotColor: "bg-green-600",
     category: "Streetlights",
     reportedAt: "Today, 7:05 AM",
-    image:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=400&auto=format&fit=crop",
+    image: outageImg,
   },
   {
     id: "COMM-003",
@@ -40,8 +44,7 @@ const communityUpdates = [
     dotColor: "bg-blue-500",
     category: "Drainage",
     reportedAt: "Today, 5:40 AM",
-    image:
-      "https://images.unsplash.com/photo-1527482797697-8795b05a13fe?q=80&w=400&auto=format&fit=crop",
+    image: p1Img,
   },
   {
     id: "COMM-004",
@@ -53,8 +56,7 @@ const communityUpdates = [
     dotColor: "bg-yellow-500",
     category: "Garbage",
     reportedAt: "June 8, 2026",
-    image:
-      "https://images.unsplash.com/photo-1604187351574-c75ca79f5807?q=80&w=400&auto=format&fit=crop",
+    image: garbageImg,
   },
   {
     id: "COMM-005",
@@ -66,8 +68,31 @@ const communityUpdates = [
     dotColor: "bg-green-600",
     category: "Water Service",
     reportedAt: "June 7, 2026",
-    image:
-      "https://images.unsplash.com/photo-1541919329513-35f7af297129?q=80&w=400&auto=format&fit=crop",
+    image: highwayImg,
+  },
+  {
+    id: "COMM-006",
+    title: "Broken basketball court hoop at Barangay 3",
+    location: "Barangay 3 Sports Complex",
+    status: "Resolved",
+    badge: "Resolved",
+    badgeColor: "bg-green-100 text-green-700",
+    dotColor: "bg-green-600",
+    category: "Sports Facilities",
+    reportedAt: "June 5, 2026",
+    image: p1Img,
+  },
+  {
+    id: "COMM-007",
+    title: "Damaged crosswalk near elementary school",
+    location: "San Miguel Elementary School",
+    status: "Resolved",
+    badge: "Resolved",
+    badgeColor: "bg-green-100 text-green-700",
+    dotColor: "bg-green-600",
+    category: "Road / Infrastructure",
+    reportedAt: "June 4, 2026",
+    image: p2Img,
   },
 ];
 
@@ -137,7 +162,11 @@ export default function CommunityUpdates() {
         </header>
 
         <section className="mt-8 grid grid-cols-4 gap-6">
-          <SummaryCard title="Public Reports" value="128" color="text-green-700" />
+          <SummaryCard
+            title="Public Reports"
+            value="128"
+            color="text-green-700"
+          />
           <SummaryCard title="New Today" value="14" color="text-blue-600" />
           <SummaryCard title="In Review" value="29" color="text-yellow-600" />
           <SummaryCard title="Resolved" value="85" color="text-green-700" />
@@ -239,7 +268,9 @@ function DesktopCommunityUpdateCard({ update }) {
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className={`h-2.5 w-2.5 rounded-full ${update.dotColor}`} />
-            <p className="text-sm font-semibold text-gray-700">{update.status}</p>
+            <p className="text-sm font-semibold text-gray-700">
+              {update.status}
+            </p>
           </div>
 
           <button className="flex items-center gap-2 rounded-xl bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800">

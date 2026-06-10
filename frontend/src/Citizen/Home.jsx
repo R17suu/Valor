@@ -7,7 +7,8 @@ import cityOverview from "../assets/P2.jpg";
 import digitalReport from "../assets/P3.jpg";
 import lguResponse from "../assets/P5.jpg";
 import pothole from "../assets/pothole.jpg";
-import outage from "../assets/outage.jpg";
+import garbageImg from "../assets/garbage-acc.jpg";
+import highwayImg from "../assets/national-highway.jpg";
 
 const heroSlides = [
   {
@@ -71,23 +72,33 @@ export default function Home() {
 
           <div className="mt-4 space-y-4">
             <CommunityReportCard
-              image={pothole}
-              title="Pothole reported"
-              location="Barangay 5, near the main road"
-              status="Pending Review"
-              badge="New"
+              image={highwayImg}
+              title="Water leakage along national road"
+              location="National Road, Maputi"
+              status="Resolved"
+              badge="Resolved"
               badgeColor="bg-green-100 text-green-700"
-              dotColor="bg-orange-500"
+              dotColor="bg-green-600"
             />
 
             <CommunityReportCard
-              image={outage}
-              title="Streetlight Outage"
-              location="Magsaysay Ave, Zone 3"
-              status="Technician Dispatched"
-              badge="2h ago"
-              badgeColor="bg-gray-100 text-gray-600"
-              dotColor="bg-green-600"
+              image={pothole}
+              title="Drainage blockage nearby"
+              location="Poblacion Public Market"
+              status="Under Review"
+              badge="4h ago"
+              badgeColor="bg-blue-100 text-blue-700"
+              dotColor="bg-blue-500"
+            />
+
+            <CommunityReportCard
+              image={garbageImg}
+              title="Garbage accumulation"
+              location="Bagontaas Riverside"
+              status="Cleanup Scheduled"
+              badge="Yesterday"
+              badgeColor="bg-yellow-100 text-yellow-700"
+              dotColor="bg-yellow-500"
             />
           </div>
         </section>
@@ -182,23 +193,33 @@ export default function Home() {
 
             <div className="mt-5 grid gap-4">
               <CommunityReportCard
-                image={pothole}
-                title="Pothole reported"
-                location="Barangay 5, near the main road"
-                status="Pending Review"
-                badge="New"
+                image={highwayImg}
+                title="Water leakage along national road"
+                location="National Road, Maputi"
+                status="Resolved"
+                badge="Resolved"
                 badgeColor="bg-green-100 text-green-700"
-                dotColor="bg-orange-500"
+                dotColor="bg-green-600"
               />
 
               <CommunityReportCard
-                image={outage}
-                title="Streetlight Outage"
-                location="Magsaysay Ave, Zone 3"
-                status="Technician Dispatched"
-                badge="2h ago"
-                badgeColor="bg-gray-100 text-gray-600"
-                dotColor="bg-green-600"
+                image={pothole}
+                title="Drainage blockage nearby"
+                location="Poblacion Public Market"
+                status="Under Review"
+                badge="4h ago"
+                badgeColor="bg-blue-100 text-blue-700"
+                dotColor="bg-blue-500"
+              />
+
+              <CommunityReportCard
+                image={garbageImg}
+                title="Garbage accumulation"
+                location="Bagontaas Riverside"
+                status="Cleanup Scheduled"
+                badge="Yesterday"
+                badgeColor="bg-yellow-100 text-yellow-700"
+                dotColor="bg-yellow-500"
               />
             </div>
           </div>

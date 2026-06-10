@@ -1,28 +1,30 @@
 // src/Admin/Reports.jsx
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Search,
-  Filter,
   ChevronDown,
   MoreHorizontal,
   Eye,
   CheckCircle,
   XCircle,
   UserCheck,
-  Clock,
-  Wrench,
-  AlertTriangle,
   MapPin,
   Download,
   Plus,
 } from "lucide-react";
 import AdminLayout from "../layouts/AdminLayouts";
+import potholeImg from "../assets/pothole.jpg";
+import garbageImg from "../assets/garbage-acc.jpg";
+import lightImg from "../assets/light.jpg";
+import highwayImg from "../assets/national-highway.jpg";
+import p1Img from "../assets/P1.png";
 
 const reports = [
   {
     id: "#VAL-2025-1245",
     title: "Large pothole along National Highway",
-    description: "Large pothole causing vehicles to slow down and creating safety risk.",
+    description:
+      "Large pothole causing vehicles to slow down and creating safety risk.",
     location: "National Highway, Poblacion",
     barangay: "Poblacion",
     category: "Road / Infrastructure",
@@ -32,8 +34,7 @@ const reports = [
     reporter: "Juan Dela Cruz",
     date: "June 8, 2025",
     time: "9:41 AM",
-    image:
-      "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?q=80&w=300&auto=format&fit=crop",
+    image: potholeImg,
   },
   {
     id: "#VAL-2025-1244",
@@ -48,8 +49,7 @@ const reports = [
     reporter: "Maria Santos",
     date: "June 8, 2025",
     time: "8:15 AM",
-    image:
-      "https://images.unsplash.com/photo-1604187351574-c75ca79f5807?q=80&w=300&auto=format&fit=crop",
+    image: garbageImg,
   },
   {
     id: "#VAL-2025-1243",
@@ -64,8 +64,7 @@ const reports = [
     reporter: "Pedro Reyes",
     date: "June 8, 2025",
     time: "7:02 AM",
-    image:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=300&auto=format&fit=crop",
+    image: lightImg,
   },
   {
     id: "#VAL-2025-1242",
@@ -80,8 +79,7 @@ const reports = [
     reporter: "Ana Garcia",
     date: "June 7, 2025",
     time: "6:40 PM",
-    image:
-      "https://images.unsplash.com/photo-1527482797697-8795b05a13fe?q=80&w=300&auto=format&fit=crop",
+    image: p1Img,
   },
   {
     id: "#VAL-2025-1241",
@@ -96,12 +94,18 @@ const reports = [
     reporter: "Mark Villanueva",
     date: "June 7, 2025",
     time: "4:30 PM",
-    image:
-      "https://images.unsplash.com/photo-1541919329513-35f7af297129?q=80&w=300&auto=format&fit=crop",
+    image: highwayImg,
   },
 ];
 
-const statuses = ["All", "Pending", "Under Review", "Assigned", "In Progress", "Resolved"];
+const statuses = [
+  "All",
+  "Pending",
+  "Under Review",
+  "Assigned",
+  "In Progress",
+  "Resolved",
+];
 const categories = [
   "All Categories",
   "Road / Infrastructure",
@@ -112,7 +116,89 @@ const categories = [
 ];
 
 export default function Reports() {
-  const [selectedReport, setSelectedReport] = useState(reports[0]);
+  // State for filters
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [categoryFilter, setCategoryFilter] = useState("All Categories");
+  const [sortBy, setSortBy] = useState("Recent"); // Recent or Most Linked
+  const [statusDropdown, setStatusDropdown] = useState(false);
+  const [categoryDropdown, setCategoryDropdown] = useState(false);
+  const [sortDropdown, setSortDropdown] = useState(false);
+
+  // Compute reports from localStorage and merge with static reports
+  const reportsList = useMemo(() => {
+    const storedReports = JSON.parse(
+      localStorage.getItem("valorReports") || "[]",
+    );
+    // Normalize stored reports to have 'image' field instead of 'photo_url'
+    const normalizedStoredReports = storedReports.map((report) => ({
+      ...report,
+      image: report.photo_url || report.image,
+      barangay: report.barangay || "Unknown",
+      location: report.location || "Not specified",
+      date: report.created_at
+        ? new Date(report.created_at).toLocaleDateString()
+        : "Today",
+      time: report.created_at
+        ? new Date(report.created_at).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        : "Now",
+      reporter: report.reporter || "Citizen",
+    }));
+    // Add mock linked reports count to each report (deterministic based on ID)
+    const reportsWithLinked = [...reports, ...normalizedStoredReports].map(
+      (report) => {
+        // Use report ID to generate a deterministic "random" number
+        const seed = report.id
+          .split("")
+          .reduce((a, b) => a + b.charCodeAt(0), 0);
+        const linkedCount = (seed % 8) + 1; // Mock: 1-8 linked reports
+        return {
+          ...report,
+          linked_reports_count: linkedCount,
+        };
+      },
+    );
+
+    // Sort by selection
+    return reportsWithLinked.sort((a, b) => {
+      if (sortBy === "Most Linked") {
+        return b.linked_reports_count - a.linked_reports_count;
+      }
+      // Default: most recent
+      const dateA = new Date(a.created_at || a.date);
+      const dateB = new Date(b.created_at || b.date);
+      return dateB - dateA;
+    });
+  }, [sortBy]);
+
+  // Filter reports based on search, status, and category
+  const filteredReports = useMemo(() => {
+    return reportsList.filter((report) => {
+      const matchesSearch =
+        searchQuery === "" ||
+        report.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        report.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        report.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        report.barangay.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesStatus =
+        statusFilter === "All" ||
+        report.status.toLowerCase() === statusFilter.toLowerCase();
+
+      const matchesCategory =
+        categoryFilter === "All Categories" ||
+        report.category === categoryFilter;
+
+      return matchesSearch && matchesStatus && matchesCategory;
+    });
+  }, [reportsList, searchQuery, statusFilter, categoryFilter]);
+
+  const [selectedReport, setSelectedReport] = useState(() =>
+    filteredReports.length > 0 ? filteredReports[0] : null,
+  );
 
   return (
     <AdminLayout>
@@ -177,16 +263,101 @@ export default function Reports() {
               <input
                 type="text"
                 placeholder="Search report ID, issue, location, barangay..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 text-sm outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700"
               />
             </div>
 
-            <SelectFilter label="Status" options={statuses} />
-            <SelectFilter label="Category" options={categories} />
-            <button className="flex h-12 items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-5 text-sm font-bold text-gray-700 hover:bg-gray-50">
-              <Filter size={17} />
-              More Filters
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setStatusDropdown(!statusDropdown)}
+                className="flex h-12 w-full items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold text-gray-700 hover:bg-gray-50 sm:min-w-44"
+              >
+                {statusFilter}
+                <ChevronDown size={16} />
+              </button>
+              {statusDropdown && (
+                <div className="absolute right-0 top-12 z-50 w-full min-w-44 rounded-xl border border-gray-200 bg-white shadow-lg">
+                  {statuses.map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => {
+                        setStatusFilter(status);
+                        setStatusDropdown(false);
+                      }}
+                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold ${
+                        statusFilter === status
+                          ? "bg-green-50 text-green-700"
+                          : "text-gray-700 hover:bg-gray-50"
+                      } first:rounded-t-xl last:rounded-b-xl`}
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="relative">
+              <button
+                onClick={() => setCategoryDropdown(!categoryDropdown)}
+                className="flex h-12 w-full items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold text-gray-700 hover:bg-gray-50 sm:min-w-44"
+              >
+                {categoryFilter}
+                <ChevronDown size={16} />
+              </button>
+              {categoryDropdown && (
+                <div className="absolute right-0 top-12 z-50 w-full min-w-48 rounded-xl border border-gray-200 bg-white shadow-lg">
+                  {categories.map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => {
+                        setCategoryFilter(category);
+                        setCategoryDropdown(false);
+                      }}
+                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold ${
+                        categoryFilter === category
+                          ? "bg-green-50 text-green-700"
+                          : "text-gray-700 hover:bg-gray-50"
+                      } first:rounded-t-xl last:rounded-b-xl`}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="relative">
+              <button
+                onClick={() => setSortDropdown(!sortDropdown)}
+                className="flex h-12 w-full items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold text-gray-700 hover:bg-gray-50 sm:min-w-44"
+              >
+                {sortBy}
+                <ChevronDown size={16} />
+              </button>
+              {sortDropdown && (
+                <div className="absolute right-0 top-12 z-50 w-full min-w-44 rounded-xl border border-gray-200 bg-white shadow-lg">
+                  {["Recent", "Most Linked"].map((option) => (
+                    <button
+                      key={option}
+                      onClick={() => {
+                        setSortBy(option);
+                        setSortDropdown(false);
+                      }}
+                      className={`w-full px-4 py-2.5 text-left text-sm font-semibold ${
+                        sortBy === option
+                          ? "bg-green-50 text-green-700"
+                          : "text-gray-700 hover:bg-gray-50"
+                      } first:rounded-t-xl last:rounded-b-xl`}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </section>
 
@@ -200,10 +371,10 @@ export default function Reports() {
                   All Citizen Reports
                 </h2>
                 <p className="text-sm text-gray-500">
-                  Showing latest reports submitted by residents.
+                  Showing {filteredReports.length} of {reportsList.length}{" "}
+                  reports.
                 </p>
               </div>
-
             </div>
 
             <div className="mt-5 overflow-x-auto">
@@ -221,14 +392,15 @@ export default function Reports() {
                 </thead>
 
                 <tbody>
-                  {reports.map((report) => (
-                    <ReportRow
-                      key={report.id}
-                      report={report}
-                      selected={selectedReport?.id === report.id}
-                      onClick={() => setSelectedReport(report)}
-                    />
-                  ))}
+                  {filteredReports &&
+                    filteredReports.map((report) => (
+                      <ReportRow
+                        key={report.id}
+                        report={report}
+                        selected={selectedReport?.id === report.id}
+                        onClick={() => setSelectedReport(report)}
+                      />
+                    ))}
                 </tbody>
               </table>
             </div>
@@ -319,6 +491,23 @@ export default function Reports() {
                     </p>
                   </InfoBox>
 
+                  <div className="rounded-2xl border-2 border-orange-200 bg-orange-50 p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-wide text-orange-600">
+                          Linked Reports
+                        </p>
+                        <p className="mt-2 text-2xl font-extrabold text-orange-700">
+                          {selectedReport.linked_reports_count}
+                        </p>
+                      </div>
+                      <div className="text-4xl text-orange-300">🔗</div>
+                    </div>
+                    <p className="mt-2 text-xs text-orange-600">
+                      Other citizens reported the same issue
+                    </p>
+                  </div>
+
                   <div className="grid grid-cols-1 gap-3 pt-2 sm:grid-cols-2">
                     <button className="flex items-center justify-center gap-2 rounded-xl bg-green-700 px-4 py-3 text-sm font-bold text-white hover:bg-green-800">
                       <UserCheck size={17} />
@@ -354,24 +543,19 @@ function ReportStat({ title, value, icon, color }) {
   return (
     <div className="rounded-2xl bg-white p-5 shadow-sm">
       <div className="flex items-center gap-4">
-        <div className={`flex h-14 w-14 items-center justify-center rounded-full ${color}`}>
+        <div
+          className={`flex h-14 w-14 items-center justify-center rounded-full ${color}`}
+        >
           {icon}
         </div>
         <div>
           <p className="text-sm font-bold text-gray-700">{title}</p>
-          <h3 className="mt-1 text-3xl font-extrabold text-gray-900">{value}</h3>
+          <h3 className="mt-1 text-3xl font-extrabold text-gray-900">
+            {value}
+          </h3>
         </div>
       </div>
     </div>
-  );
-}
-
-function SelectFilter({ label, options }) {
-  return (
-    <button className="flex h-12 w-full min-w-0 items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 text-sm font-bold text-gray-700 sm:min-w-44">
-      {label}
-      <ChevronDown size={16} />
-    </button>
   );
 }
 
