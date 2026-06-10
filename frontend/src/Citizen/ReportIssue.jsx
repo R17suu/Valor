@@ -263,6 +263,9 @@ function UploadPhotoStep({
       <main className={desktop ? "" : "px-5 pt-6"}>
         <div className="flex items-center gap-2 mb-4">
         </div>
+         <h2 className="text-xl font-extrabold text-gray-900">
+            Take or upload a picture
+          </h2>
         <p className="mt-2 text-sm text-gray-500">
           VALOR AI will analyze the photo and automatically fill the report
           details.
