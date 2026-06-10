@@ -71,15 +71,54 @@ export default function ReportIssue() {
     reader.readAsDataURL(file);
   };
 
-  const handleUseMockSample = () => {
-    fetch(garbageSampleImg)
-      .then((res) => res.blob())
-      .then((blob) => {
-        const file = new File([blob], "garbage-sample.jpg", {
-          type: "image/jpeg",
-        });
-        handlePhotoSelect(file);
+  const handleUseMockSample = async () => {
+    setIsLoading(true);
+    try {
+      // Fetch the garbage sample image
+      const response = await fetch(garbageSampleImg);
+      const blob = await response.blob();
+      const file = new File([blob], "garbage-sample.jpg", {
+        type: "image/jpeg",
       });
+      handlePhotoSelect(file);
+      setIsLoading(false);
+
+      // Show image for 3 seconds before advancing to review
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      setIsLoading(true);
+
+      // Use mock data directly without calling API
+      const location = getMockGPSLocation();
+      setGpsLocation(location);
+
+      // Mock AI response for demo
+      const mockAiResult = {
+        photoUrl: garbageSampleImg,
+        title: "Garbage accumulation on the road",
+        description:
+          "Large pile of garbage scattered across the roadside, causing environmental concern and potential health hazards.",
+        category: "Garbage / Waste",
+        priority: "high",
+        department: "City ENRO",
+        confidence: 0.92,
+        location: `${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}`,
+      };
+
+      setAiResult(mockAiResult);
+      setFormData({
+        title: mockAiResult.title,
+        description: mockAiResult.description,
+        category: mockAiResult.category,
+        priority: mockAiResult.priority,
+        department: mockAiResult.department,
+      });
+      setIsLoading(false);
+      setStep(2);
+    } catch (error) {
+      console.error("Error loading sample:", error);
+      alert("Failed to load sample");
+      setIsLoading(false);
+    }
   };
 
   const handlePhotoNext = async () => {
@@ -144,15 +183,21 @@ export default function ReportIssue() {
 
   // Simulate duplicate detection (mock)
   const checkForDuplicates = async () => {
-    // Simulate a 30% chance of finding a duplicate
-    const shouldFindDuplicate = Math.random() < 0.3;
+    // Simulate a 100% chance of finding a duplicate (demo mode)
+    const shouldFindDuplicate = Math.random() < 1;
 
     if (shouldFindDuplicate) {
+      // Mock data with realistic scenarios
+      // Most commonly: 2-4 people reporting the same issue
+      const reporterCounts = [2, 2, 3, 3, 4, 5]; // Weighted towards 2-3 people
+      const randomCount =
+        reporterCounts[Math.floor(Math.random() * reporterCounts.length)];
+
       const mockDuplicate = {
         duplicate_found: true,
         incident_id: `inc-${Math.random().toString(36).substr(2, 9)}`,
-        distance_meters: Math.floor(Math.random() * 90) + 10, // 10-100 meters
-        existing_incident_count: Math.floor(Math.random() * 3) + 1, // 1-3 reports
+        distance_meters: Math.floor(Math.random() * 80) + 5, // 5-85 meters
+        existing_incident_count: randomCount,
       };
       setDuplicateData(mockDuplicate);
       setShowDuplicateAlert(true);
@@ -230,6 +275,9 @@ export default function ReportIssue() {
 
     setIsLoading(true);
     try {
+      // Show loader for 2 seconds for demo purposes
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // First, check for duplicates
       const duplicate = await checkForDuplicates();
       setIsLoading(false);
@@ -443,10 +491,9 @@ function UploadPhotoStep({
               type="button"
               onClick={onUseMockSample}
               disabled={isLoading}
-              className="flex items-center justify-center gap-2 rounded-2xl bg-white py-4 text-sm font-extrabold text-green-700 shadow-sm hover:bg-green-50"
+              className="text-xs font-medium text-gray-400 hover:text-gray-500 py-2 transition-colors"
             >
-              <Sparkles size={18} />
-              Use Sample
+              Try sample
             </button>
           </div>
 
@@ -1017,7 +1064,7 @@ function LoadingScreen() {
         />
         <h2 className="text-xl font-extrabold text-gray-900">Hold on...</h2>
         <p className="mt-2 text-sm text-gray-500">
-          We're uploading your photo and analyzing it with AI
+          Checking for similar reports in your area
         </p>
       </div>
     </div>
